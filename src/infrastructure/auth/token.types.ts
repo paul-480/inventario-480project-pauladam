@@ -1,8 +1,8 @@
 // Esta interfaz refleja lo que viene en el JWT
 export interface DecodedToken {
-  uuid: string;
+  id: string;
   email: string;
-  role: role; // Los valores que defines en tu dominio
+  role: role;
   exp: number;
   iat: number;
 }

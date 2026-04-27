@@ -1,6 +1,7 @@
-import type { Auth } from "@/domain/auth/auth.entity";
+
 
 export default interface AuthRepository {
-    login({ email, password }: { email: string; password: string }): Promise<Auth|null>;
-
+ 
+    login({ email, password }: { email: string; password: string }): Promise<string|null>;
+    logout(): Promise<void>;
 }

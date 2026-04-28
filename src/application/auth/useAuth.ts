@@ -1,4 +1,3 @@
-// src/application/auth/useAuth.ts
 import { useAuthStore } from './useAuthStore';
 
 export const useAuth = () => {

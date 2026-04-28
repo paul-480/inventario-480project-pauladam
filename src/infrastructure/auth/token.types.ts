@@ -1,9 +1,10 @@
+import type { UserRole } from "@/domain/auth/auth.entity";
+
 // Esta interfaz refleja lo que viene en el JWT
 export interface DecodedToken {
   id: string;
   email: string;
-  role: role;
+  role: UserRole;
   exp: number;
   iat: number;
 }
-type role = 'ADMIN' | 'EMPLOYEE';

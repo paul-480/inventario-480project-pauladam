@@ -2,9 +2,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/application/auth/useAuth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/components/ui/card';
 import Logo from '@/ui/components/common/Logo';
 import LoginForm from '@/ui/components/forms/login/LoginForm';
+
 
 
 
@@ -34,9 +35,9 @@ export default function LoginPage() {
           <div className="mt-6 p-4 bg-muted rounded-lg text-sm">
         <p className="font-semibold mb-2">Usuarios de prueba:</p>
         <ul className="space-y-1 text-xs text-muted-foreground">
-          <li>Admin: ana.garcia@480.com / admin123</li>
-          <li>PM: carlos.rodriguez@480.com / pm123</li>
-          <li>Dev: maria.lopez@480.com / dev123</li>
+          <li>Admin: ana@empresa.com / 12345678</li>
+          <li>PM: carlos@empresa.com / 12346578</li>
+          <li>Dev: lucia@empresa.com / 12345678</li>
         </ul>
       </div>
         </CardContent>

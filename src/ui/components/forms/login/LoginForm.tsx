@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm,Controller, type SubmitHandler } from 'react-hook-form';
 import { useAuth } from '@/application/auth/useAuth';
 import { loginSchema } from '@/application/auth/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Label } from '@/ui/components/ui/label';
+import { Input } from '@/ui/components/ui/input';
+import { Alert, AlertDescription } from '@/ui/components/ui/alert';
+import { Button } from '@/ui/components/ui/button';
 
 type Credentials = z.infer<typeof loginSchema>;
 
@@ -44,7 +44,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <div>
+      <div className='space-y-2'>
         <Label htmlFor="email">Correo Corporativo</Label>
         <Input
           id="email"
@@ -55,7 +55,7 @@ export default function LoginForm() {
         {errors.email && <Alert variant="destructive"><AlertDescription>{errors.email.message}</AlertDescription></Alert>}
       </div>
 
-      <div>
+      <div className='space-y-2'>
         <Label htmlFor="password">Contraseña</Label>
         <Input
           id="password"

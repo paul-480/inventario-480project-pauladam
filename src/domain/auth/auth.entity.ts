@@ -1,7 +1,7 @@
 import type { DecodedToken } from "@/infrastructure/auth/token.types";
 import { AuthMachine, type AuthEvent, type AuthState } from "./auth.machine";
 
-export type UserRole = 'ADMIN' | 'EMPLOYEE';
+export type UserRole = 'ROLE_ADMIN' | 'ROLE_EMPLOYEE';
 export class Auth {
     private id: string | null = null;
     private role: UserRole | null = null;
@@ -19,7 +19,7 @@ export class Auth {
     }
 
     isAdmin(): boolean {
-        return this.role === "ADMIN";
+        return this.role === "ROLE_ADMIN";
     }
 
     getId(): string | null  {

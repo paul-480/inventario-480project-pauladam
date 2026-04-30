@@ -10,7 +10,7 @@ export const AuthApiRepository: AuthRepository = {
             return token;
         } catch (error) {
             console.error('Login failed:', error);
-            return null;
+            return Promise.reject(error);
         }
     },
     logout: async () => {

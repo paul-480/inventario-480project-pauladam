@@ -1,10 +1,11 @@
 import type { Role } from "@/domain/shared/common.types";
 import type { User } from "@/domain/user/user.entity";
+import type { CreateUserSchema, UpdateUserSchema } from "./user.schema";
 
 export interface UserRepository {
     getUserById(id: string): Promise<User | null>;
     getUsers(page: number, limit: number, isActive?: boolean, role?: Role): Promise<User[]>;
-    createUser(user: User): Promise<User | null>;
-    updateUser(user: User): Promise<User | null>;
+    createUser(user: CreateUserSchema): Promise<User | null>;
+    updateUser(user: UpdateUserSchema): Promise<User | null>;
     deleteUser(id: string): Promise<null>;
 }   

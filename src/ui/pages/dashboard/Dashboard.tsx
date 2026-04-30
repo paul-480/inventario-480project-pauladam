@@ -1,14 +1,28 @@
+import { useEffect, useState } from 'react';
+import type { User } from '@/domain/user/user.entity';
+import { AuthApiRepository } from '@/infrastructure/api/auth/auth.api.repository';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Aquí iría la lógica de logout
+  const handleLogout = async () => {
+    await AuthApiRepository.logout();
     navigate('/login');
   };
+  
 
-   type Estado = 'activo' | 'completado';
+  const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await UserApiRepository.getUserById(1);
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
+  type Estado = 'activo' | 'completado';
 
   const menuItems = [
     { id: 1, nombre: 'Dashboard', icono: '📊', ruta: '/' },

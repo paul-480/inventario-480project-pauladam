@@ -8,11 +8,13 @@ export const UserApiRepository: UserRepository = {
         const response = await axiosClient.get(`/users/${id}`);
         return response.data;
     },
-    getUsers: function (page: number, limit: number, isActive?: boolean, role?: Role): Promise<User[]> {
-        throw new Error("Function not implemented.");
+    getUsers: async (page: number,   limit: number, isActive?: boolean, role?: Role): Promise<User[]> => {
+        const response = await axiosClient.get(`/users?page=${page}&limit=${limit}&isActive=${isActive}&role=${role}`);
+        return response.data;
     },
-    createUser: function (user: User): Promise<User | null> {
-        throw new Error("Function not implemented.");
+    createUser: async (user: User): Promise<User | null> => {
+        const response = await axiosClient.post(`/users`, user);
+        return response.data;
     },
     updateUser: function (user: User): Promise<User | null> {
         throw new Error("Function not implemented.");

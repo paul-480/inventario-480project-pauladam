@@ -4,6 +4,7 @@ export interface User {
     id:        string;
     name:      string;
     surname:   string;
+    password:  string;
     email:     string;
     is_active: boolean;
     role:      UserRole;

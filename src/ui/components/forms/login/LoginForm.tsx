@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useAuth } from '@/application/auth/useAuth';
 import { loginSchema } from '@/application/auth/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/ui/components/ui/input';
 import { Alert, AlertDescription } from '@/ui/components/ui/alert';
 import { Button } from '@/ui/components/ui/button';
-import { Field, FieldError, FieldLabel } from '../../ui/field';
 import { FormInput } from '../common/FormInput';
 
 type Credentials = z.infer<typeof loginSchema>;
@@ -16,7 +14,7 @@ export default function LoginForm() {
     const {
         control,
         handleSubmit,
-        setError,
+
         formState: { errors }
     } = useForm<Credentials>({
         resolver: zodResolver(loginSchema),
@@ -39,10 +37,6 @@ export default function LoginForm() {
 
         } catch (err) {
             console.error("Fallo en el login:", err);
-            setError("root", {
-                type: "manual",
-                message: "Credenciales inválidas. Por favor, inténtalo de nuevo.",
-            });
         }
     };
 

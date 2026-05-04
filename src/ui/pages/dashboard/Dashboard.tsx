@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
-import type { User } from '@/domain/user/user.entity';
 import { AuthApiRepository } from '@/infrastructure/api/auth/auth.api.repository';
+import { useMe } from '@/ui/hooks/user/useMe';
 import { useNavigate } from 'react-router-dom';
-import { UserApiRepository } from '@/infrastructure/api/user/user.api.repository';
+
 
 const Dashboard = () => {
+
+  const {me, loading, error} = useMe();
+  
+
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -13,17 +16,7 @@ const Dashboard = () => {
   };
 
 
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await UserApiRepository.getUserById("40000000-0000-0000-0000-000000000001");
-      console.log("USUARIO", { user });
-      setUser(user);
-    };
-    fetchUser();
-  }, []);
-
+  
   type Estado = 'activo' | 'completado';
 
   const menuItems = [

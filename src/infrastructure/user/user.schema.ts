@@ -22,15 +22,6 @@ export const CreateUserSchema = z.object({
 }) satisfies z.ZodType<CreateUserDto>;
 export type CreateUserSchema = z.infer<typeof CreateUserSchema>;
 
-export const UpdateUserSchema = z.object({
-    name: z.string(),
-    surname: z.string(),
-    password: z.string(),
-    email: z.email(),
-    isActive: z.boolean(),
-    role: z.enum(USER_ROLES),
-});
-export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
 
 export const DeleteUserSchema = z.object({
     id: z.uuidv7(),

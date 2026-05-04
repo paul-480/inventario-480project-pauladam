@@ -8,3 +8,11 @@ export interface CreateUserDto {
     password: string;
     role:     UserRoleValue;
 }
+export interface UserResponseDto {
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
+    role: string;
+    is_active: boolean;
+}

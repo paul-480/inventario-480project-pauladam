@@ -1,5 +1,5 @@
 import z from "zod";
-import type { CreateUserDto } from "./user.dto";
+import type { CreateUserDto } from "../../application/user/user.dto";
 import { USER_ROLES } from "@/domain/shared/user-role.vo";
 export const userSchema = z.object({
     id: z.uuidv7(),
@@ -8,7 +8,7 @@ export const userSchema = z.object({
     password: z.string(),
     email: z.email(),
     isActive: z.boolean(),
-    role: z.enum(["ROLE_ADMIN", "ROLE_EMPLOYEE"]),
+    role: z.enum(USER_ROLES),
 });
 export type UserSchema = z.infer<typeof userSchema>;
 
@@ -28,7 +28,7 @@ export const UpdateUserSchema = z.object({
     password: z.string(),
     email: z.email(),
     isActive: z.boolean(),
-    role: z.enum(["ROLE_ADMIN", "ROLE_EMPLOYEE"]),
+    role: z.enum(USER_ROLES),
 });
 export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
 

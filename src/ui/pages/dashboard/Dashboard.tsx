@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { User } from '@/domain/user/user.entity';
 import { AuthApiRepository } from '@/infrastructure/api/auth/auth.api.repository';
 import { useNavigate } from 'react-router-dom';
+import { UserApiRepository } from '@/infrastructure/api/user/user.api.repository';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,13 +11,14 @@ const Dashboard = () => {
     await AuthApiRepository.logout();
     navigate('/login');
   };
-  
+
 
   const [user, setUser] = useState<User | null>(null);
-  
+
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await UserApiRepository.getUserById(1);
+      const user = await UserApiRepository.getUserById("40000000-0000-0000-0000-000000000001");
+      console.log("USUARIO", { user });
       setUser(user);
     };
     fetchUser();
@@ -43,7 +45,7 @@ const Dashboard = () => {
     { id: 3, proyecto: 'API Backend', horas: 5, fecha: '2026-04-22' },
   ];
 
-  return(
+  return (
     <div>
       {/* Header */}
       <header style={styles.header}>

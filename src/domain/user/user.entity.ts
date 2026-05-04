@@ -1,4 +1,4 @@
-import type { UserRole } from "../auth/auth.entity";
+import { UserRole } from "../shared/user-role.vo";
 
 export interface User {
     id:        string;

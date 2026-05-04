@@ -1,6 +1,5 @@
 import type { Role } from "@/domain/shared/common.types";
 import type { User } from "@/domain/user/user.entity";
-import { axiosClient } from "../axios.client";
 import type { UserRepository } from "../../user/user.repository";
 import type { CreateUserSchema, UpdateUserSchema } from "@/infrastructure/user/user.schema";
 import { axiosUserClient } from "./axios.user.client";

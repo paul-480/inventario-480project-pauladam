@@ -1,4 +1,5 @@
 import { assets } from "@/assets/";
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 interface LogoProps {
@@ -11,9 +12,12 @@ const { logo,  fullLogo, /*logoDark, fullLogoDark*/ } = assets
 const Logo = ({ className, size = 'md' }: LogoProps) => {
 
     const [selectedLogo, setSelectedLogo] = useState(size === 'sm' ? logo : fullLogo)
-
+    const {theme} = useTheme()
     useEffect(() => {
-        setSelectedLogo(size === 'sm' ? logo : fullLogo)
+        if (theme === 'dark') {
+            setSelectedLogo(size === 'sm' ? logo : fullLogo)
+        } else {
+        setSelectedLogo(size === 'sm' ? logo : fullLogo)}
     }, [size, className]);
 
 

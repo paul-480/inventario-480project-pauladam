@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ThemeProvider } from "next-themes";
 import AppRouter from './ui/routes/AppRouter';
 import { useAuth } from './application/auth/useAuth';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 function App() {
   const { checkAuth } = useAuth();
@@ -17,7 +18,9 @@ function App() {
       defaultTheme="light"
       enableSystem
     >
-      <AppRouter />
+      <TooltipProvider>
+        <AppRouter />
+      </TooltipProvider>
     </ThemeProvider>
 
   );

@@ -1,24 +1,24 @@
 import { GetMyUserUseCase } from "@/application/user/use-cases/get-my-user.use-case";
-import type { DomainError } from "@/domain/shared/errors/domain.error";
 import { useEffect, useState } from "react";
 import { UserApiRepository } from "@/infrastructure/api/user/user.api.repository";
-import type { User } from "@/domain/user/user.entity";
-
-
-const GetMyUser = GetMyUserUseCase(UserApiRepository)
+import  { type User } from "@/domain/user/user.entity";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/application/auth/useAuth";
 
 export const useMe = () => {
-    const [me, setMe] = useState<User | null>(null);
+    const {handleAuthError} = useAuth();
+    const [me, setMe] = useState<User>({name: ""} as User);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<DomainError | null>(null);
+    const navigate = useNavigate();
+
     useEffect(()=>{
-        GetMyUser.then((user)=>{
+        GetMyUserUseCase(UserApiRepository)
+        .then(user => {
+            console.log("Usuario obtenido:", {user});
             setMe(user);
             setLoading(false);
-        }).catch((error)=>{
-            setError(error);
-            setLoading(false);
-        })
-    }, [])
-    return {me, loading, error}
+        }).catch(err => {handleAuthError(err)})
+       
+    }, [navigate])
+    return {me, loading}
 }

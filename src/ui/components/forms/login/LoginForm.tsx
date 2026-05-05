@@ -26,7 +26,7 @@ export default function LoginForm() {
     const navigate = useNavigate();
     const { login, isLoading } = useAuth();
 
-    console.log("Estado del formulario - errores:", errors, "isLoading:", isLoading);
+    //console.log("Estado del formulario - errores:", errors, "isLoading:", isLoading);
 
 
     const onSubmit: SubmitHandler<Credentials> = async (e) => {

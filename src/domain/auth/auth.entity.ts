@@ -5,6 +5,7 @@ export type UserRole = 'ADMIN' | 'EMPLOYEE';
 export class Auth {
     private id: string | null = null;
     private role: UserRole | null = null;
+    private errMessage: string | null = null;
     private state: AuthState = "UNAUTHENTICATED";
 
 
@@ -41,7 +42,6 @@ export class Auth {
             return this;
         }
 
-        // Si el evento es un login exitoso, actualizamos los datos
         const newId = event === 'LOGIN' ? payload?.id : this.id;
         const newRole = event === 'LOGIN' ? payload?.role : this.role;
 
@@ -49,7 +49,6 @@ export class Auth {
         newAuth.state = nextState;
         newAuth.id = newId || null;
         newAuth.role = newRole || null;
-        // Retornamos una NUEVA instancia para que React/Zustand detecten el cambio
         return newAuth;
     }
 

@@ -6,7 +6,7 @@ interface LogoProps {
     className?: string;
     size?: 'sm' | 'md' | 'lg' | 'xl';
 }
-const { logo,  fullLogo, /*logoDark, fullLogoDark*/ } = assets
+const { logo,  fullLogo, logoDark, fullLogoDark } = assets
 
 //const matches = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const Logo = ({ className, size = 'md' }: LogoProps) => {
@@ -15,10 +15,10 @@ const Logo = ({ className, size = 'md' }: LogoProps) => {
     const {theme} = useTheme()
     useEffect(() => {
         if (theme === 'dark') {
-            setSelectedLogo(size === 'sm' ? logo : fullLogo)
+            setSelectedLogo(size === 'sm' ? logoDark : fullLogoDark)
         } else {
         setSelectedLogo(size === 'sm' ? logo : fullLogo)}
-    }, [size, className]);
+    }, [size, className, theme]);
 
 
     const sizeClasses = {
@@ -33,7 +33,7 @@ const Logo = ({ className, size = 'md' }: LogoProps) => {
         <img
             src={selectedLogo}
             alt="480:DEV"
-            className={sizeClasses[size] + ` w-auto ${className}`}
+            className={sizeClasses[size] + ` transition-all duration-200 w-auto ${className}`}
         />
     )
 }

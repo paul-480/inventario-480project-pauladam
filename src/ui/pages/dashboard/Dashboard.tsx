@@ -1,4 +1,3 @@
-import { useAuth } from '@/application/auth/useAuth';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useMe } from '@/ui/hooks/user/useMe';
 
@@ -6,7 +5,6 @@ import { useMe } from '@/ui/hooks/user/useMe';
 const Dashboard = () => {
 
   const {me, loading,} = useMe();
-  const {logout} = useAuth()
  
 
   return (  

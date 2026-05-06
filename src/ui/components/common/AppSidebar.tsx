@@ -4,17 +4,103 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  useSidebar,
 } from "@/ui/components/ui/sidebar"
+import {
+  Home,
+  Users,
+  FolderKanban,
+  LogOut,
+  Sun,
+  Moon,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import Logo from "./Logo"
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/application/auth/useAuth";
+import { useTheme } from "next-themes";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+
 
 const AppSidebar = () => {
+  const { state } = useSidebar();
+  const isExpanded = state === "expanded";
+  const isMobile = useIsMobile();
+  const { setTheme, theme, } = useTheme();
+  const { isAdmin, logout,isLoading } = useAuth();
+  
+  //useEffect(() => {},[])
+  const navItems = [
+    { path: '/', label: 'Inicio', icon: Home, show: true },
+    { path: '/personal', label: 'Personal', icon: Users, show: isAdmin },
+    { path: '/clientes', label: 'Clientes', icon: Building2, show: isAdmin },
+    { path: '/proyectos', label: 'Proyectos', icon: FolderKanban, show: true },
+  ];
+  const [menuOptions, setMenuOptions] = useState(navItems);
+  useEffect(() => {
+    setMenuOptions(navItems.filter(item => item.show));
+  }, [isAdmin, isLoading]);
+  const toggleDarkTheme = theme === 'dark' ? () => setTheme('light') : () => setTheme('dark');
   return (
-    <Sidebar>
-      <SidebarHeader />
-      <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
-      </SidebarContent>
-      <SidebarFooter />
+    <Sidebar collapsible="icon" >
+      <SidebarHeader className={state === "expanded" ? "space-x-2 space-y-2.5 p-4" : ""}>
+        <Logo size={state === "expanded" ? isMobile ? "xl" : "lg" : "sm"} className={isMobile ? "ml-auto" : undefined} />
+        {/* <SidebarMenuButton onClick={toggleSidebar} className="justify-end-safe">
+            <Menu size={20} />
+          </SidebarMenuButton> */}
+        
+      </SidebarHeader>
+      
+      <hr /><SidebarContent>
+        
+        <SidebarRail className="mt-52 h-5" >
+          <Button size={'icon-xs'} variant={'ghost'} className="flex items-center justify-center  rounded-full bg-primary-foreground  transition">
+            {isExpanded  ? <ChevronLeft size='sm' /> : <ChevronRight size="sm" />}
+          </Button>
+
+        </SidebarRail>
+        <SidebarGroup >
+        {menuOptions.map((item) => {
+          return (
+            <SidebarMenuItem key={item.path}>
+              <SidebarMenuButton asChild tooltip={item.label}>
+                <Link to={item.path}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+        </SidebarGroup >
+
+      </SidebarContent><hr />
+      <SidebarFooter >
+        <SidebarMenu >
+          <SidebarMenuItem >
+            <SidebarMenuButton onClick={toggleDarkTheme} tooltip={"Altenar tema"} >
+              {isExpanded && <span>Toggle Theme</span>}
+             <div className="ml-auto">
+                {theme === "light" ? <Sun size={20} /> : <Moon size={20} />}
+             </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem >
+            <SidebarMenuButton onClick={() => { logout() }} tooltip={"Cerrar sesión"} >
+              {isExpanded && <span className="text-destructive">Cerrar sesión</span>}             
+               <div className="ml-auto"> <LogOut size={20} className="text-destructive" /></div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }

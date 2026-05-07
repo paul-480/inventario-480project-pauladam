@@ -27,7 +27,7 @@ import { useAuth } from "@/application/auth/useAuth";
 import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
+
 
 
 const AppSidebar = () => {
@@ -37,7 +37,6 @@ const AppSidebar = () => {
   const { setTheme, theme, } = useTheme();
   const { isAdmin, logout,isLoading } = useAuth();
   
-  //useEffect(() => {},[])
   const navItems = [
     { path: '/', label: 'Inicio', icon: Home, show: true },
     { path: '/personal', label: 'Personal', icon: Users, show: isAdmin },
@@ -61,10 +60,9 @@ const AppSidebar = () => {
       
       <hr /><SidebarContent>
         
-        <SidebarRail className="mt-52 h-5" >
-          <Button size={'icon-xs'} variant={'ghost'} className="flex items-center justify-center  rounded-full bg-primary-foreground  transition">
-            {isExpanded  ? <ChevronLeft size='sm' /> : <ChevronRight size="sm" />}
-          </Button>
+        <SidebarRail   className="flex items-center justify-center  rounded-full   transition ">
+            {isExpanded  ? <ChevronLeft size={20}  /> : <ChevronRight size={20} />}
+          
 
         </SidebarRail>
         <SidebarGroup >

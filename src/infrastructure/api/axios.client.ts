@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { tokenService } from './auth/token.service';
-import { redirect } from 'react-router-dom';
 import { TokenExpiredError } from '@/domain/auth/errors/token-expired.error';
 import { UnauthorizedError } from '@/domain/auth/errors/unauthorized.error';
 

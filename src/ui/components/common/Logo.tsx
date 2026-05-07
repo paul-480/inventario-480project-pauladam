@@ -22,7 +22,7 @@ const Logo = ({ className, size = 'md' }: LogoProps) => {
 
 
     const sizeClasses = {
-        sm: 'h-6',
+        sm: 'h-4',
         md: 'h-8',
         lg: 'h-10',
         xl: 'h-16',
@@ -33,7 +33,7 @@ const Logo = ({ className, size = 'md' }: LogoProps) => {
         <img
             src={selectedLogo}
             alt="480:DEV"
-            className={sizeClasses[size] + ` transition-all duration-200 w-auto ${className}`}
+            className={sizeClasses[size] + ` transition-all duration-300 w-auto ${className}`}
         />
     )
 }

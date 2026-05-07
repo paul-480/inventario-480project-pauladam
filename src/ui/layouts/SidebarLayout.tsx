@@ -9,8 +9,8 @@ const SidebarLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
-        {isMobile && <SidebarTrigger className='ml-auto' />}
+      <main className='container p-4 md:p-8 max-w-7xl mx-auto space-y-6'>
+        {isMobile && <SidebarTrigger className='ml-0 sticky' />}
 
         <Outlet />
       </main>

@@ -12,6 +12,9 @@ export class Auth {
     isAuthenticated(): boolean {
         return this.state === "AUTHENTICATED";
     }
+    getErrorMessage(): string | null {
+        return this.errMessage;
+    }
 
     setAuth(decodedToken: DecodedToken): void {
         this.id = decodedToken.id;

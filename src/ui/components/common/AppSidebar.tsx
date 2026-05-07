@@ -48,39 +48,43 @@ const AppSidebar = () => {
     setMenuOptions(navItems.filter(item => item.show));
   }, [isAdmin, isLoading]);
   const toggleDarkTheme = theme === 'dark' ? () => setTheme('light') : () => setTheme('dark');
+  type ItemParam = {
+    path: string;
+    label: string;
+    icon: import("react").ForwardRefExoticComponent<Omit<import("lucide-react").LucideProps, "ref"> & import("react").RefAttributes<SVGSVGElement>>;
+    show: boolean;
+  };
+
+  const CustomItem = (item: ItemParam) => (
+    <SidebarMenuItem key={item.path}>
+      <SidebarMenuButton asChild tooltip={item.label}>
+        <Link to={item.path}>
+          <item.icon />
+          <span>{item.label}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+  
+  
+  
   return (
     <Sidebar collapsible="icon" >
       <SidebarHeader className={state === "expanded" ? "space-x-2 space-y-2.5 p-4" : ""}>
         <Logo size={state === "expanded" ? isMobile ? "xl" : "lg" : "sm"} className={isMobile ? "ml-auto" : undefined} />
-        {/* <SidebarMenuButton onClick={toggleSidebar} className="justify-end-safe">
-            <Menu size={20} />
-          </SidebarMenuButton> */}
-        
       </SidebarHeader>
-      
-      <hr /><SidebarContent>
-        
+
+<hr />
+      <SidebarContent>        
         <SidebarRail   className="flex items-center justify-center  rounded-full   transition ">
             {isExpanded  ? <ChevronLeft size={20}  /> : <ChevronRight size={20} />}
-          
-
         </SidebarRail>
         <SidebarGroup >
-        {menuOptions.map((item) => {
-          return (
-            <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton asChild tooltip={item.label}>
-                <Link to={item.path}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          );
-        })}
+        {menuOptions.map(CustomItem)}
         </SidebarGroup >
+      </SidebarContent>
+<hr />
 
-      </SidebarContent><hr />
       <SidebarFooter >
         <SidebarMenu >
           <SidebarMenuItem >

@@ -14,7 +14,7 @@ export const UserApiRepository: UserRepository = {
         return response.data as UserResponseDto | null;
     },
     getUsers: async (page: number, limit: number, isActive?: boolean, role?: UserRoleValue): Promise<User[]> => {
-        const response = await axiosClient.get(`/users?page=${page}&limit=${limit}&isActive=${isActive}&role=${role}`);
+        const response = await axiosClient.get(`/users?page=${page}&limit=${limit} ${isActive !== undefined ? `&isActive=${isActive}` : ''} ${role !== undefined ? `&role=${role}` : ''}`);
         return userMaper.toDomainList(response.data);
     },
     createUser: async (user: CreateUserSchema): Promise<User | null> => {

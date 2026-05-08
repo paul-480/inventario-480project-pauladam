@@ -1,4 +1,4 @@
-import MainProfileCard from '@/ui/components/common/MainProfileCard';
+import MainProfileCard from '@/ui/components/user/MainProfileCard';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useMe } from '@/ui/hooks/user/useMe';
 

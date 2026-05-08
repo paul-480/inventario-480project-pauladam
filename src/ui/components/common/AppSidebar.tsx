@@ -39,9 +39,9 @@ const AppSidebar = () => {
   
   const navItems = [
     { path: '/', label: 'Inicio', icon: Home, show: true },
-    { path: '/personal', label: 'Personal', icon: Users, show: isAdmin },
-    { path: '/clientes', label: 'Clientes', icon: Building2, show: isAdmin },
-    { path: '/proyectos', label: 'Proyectos', icon: FolderKanban, show: true },
+    { path: '/users', label: 'Personal', icon: Users, show: isAdmin },
+    { path: '/clients', label: 'Clientes', icon: Building2, show: isAdmin },
+    { path: '/projects', label: 'Proyectos', icon: FolderKanban, show: true },
   ];
   const [menuOptions, setMenuOptions] = useState(navItems);
   useEffect(() => {

@@ -9,7 +9,6 @@ import { tokenService } from "@/infrastructure/api/auth/token.service";
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
     auth: new Auth(),
-    errorMessage: null,
     send: (event, payload) => {
         const currentState = get().auth;
         const newAuth = currentState.transition(event, payload);
@@ -36,10 +35,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             throw err;
         }
     },
-    logout: (message?: string) => {
+    logout: () => {
         tokenService.remove();
         get().send("LOGOUT");
-        set({ errorMessage: message || null });
     },
     checkAuth:  () => {
         get().send("REQUEST_AUTH");
@@ -47,15 +45,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         if (token) {
             try {
                 const decoded = authMapper.decodeToken(token);
-                get().send("LOGIN", { id: decoded.id, role: decoded.role });
+                const auth = new Auth();
+                auth.setAuth(decoded);
+                set({ auth });
             } catch (e) {
                 console.error("Error decoding token:", e);
                 tokenService.remove();
-                get().logout("Tu sesión ha caducado. Por favor, inicia sesión nuevamente.");
+                get().send("LOGOUT");
             }
-        } else {
-            get().logout("Tu sesión ha caducado. Por favor, inicia sesión nuevamente.");
+        }else {
+            get().send("LOGOUT");
         }
-    },
-    clearError: () => { set({ errorMessage: null }) }
+    }
 }));

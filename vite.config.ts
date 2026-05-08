@@ -17,5 +17,6 @@ export default defineConfig({
         // additionalData: `@use "@/ui/styles/variables" as *;`
       }
     }
-  }
+  },
+  base: './'
 })

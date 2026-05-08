@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useAuth } from '@/application/auth/useAuth';
-import { loginSchema } from '@/application/auth/auth.schema';
+import { loginSchema } from '@/infrastructure/auth/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, AlertDescription } from '@/ui/components/ui/alert';
 import { Button } from '@/ui/components/ui/button';
@@ -26,7 +26,7 @@ export default function LoginForm() {
     const navigate = useNavigate();
     const { login, isLoading } = useAuth();
 
-    console.log("Estado del formulario - errores:", errors, "isLoading:", isLoading);
+    //console.log("Estado del formulario - errores:", errors, "isLoading:", isLoading);
 
 
     const onSubmit: SubmitHandler<Credentials> = async (e) => {

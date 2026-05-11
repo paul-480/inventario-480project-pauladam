@@ -1,8 +1,8 @@
 import { type Control, type FieldPath, type FieldValues, Controller } from "react-hook-form";
 import { Field, FieldLabel, FieldError } from "../../ui/field";
-import { Input , type InputProps} from "../../ui/input";
+import { Input } from "@/ui/components/ui/input";
 
-export interface FormInputProps<TFieldValues extends FieldValues> extends InputProps {
+export interface FormInputProps<TFieldValues extends FieldValues> extends React.ComponentProps<"input"> {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;

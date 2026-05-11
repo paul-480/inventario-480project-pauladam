@@ -27,6 +27,8 @@ import { useAuth } from "@/application/auth/useAuth";
 import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useMe } from "@/ui/hooks/user/useMe";
+import CustomUserCard from "../user/CustomUserCard";
 
 
 
@@ -44,9 +46,12 @@ const AppSidebar = () => {
     { path: '/projects', label: 'Proyectos', icon: FolderKanban, show: true },
   ];
   const [menuOptions, setMenuOptions] = useState(navItems);
+  
+  const {me } = useMe()
+
   useEffect(() => {
     setMenuOptions(navItems.filter(item => item.show));
-  }, [isAdmin, isLoading]);
+  }, [isAdmin, isLoading, me?.role]);
   const toggleDarkTheme = theme === 'dark' ? () => setTheme('light') : () => setTheme('dark');
   type ItemParam = {
     path: string;
@@ -69,9 +74,19 @@ const AppSidebar = () => {
   
   
   return (
-    <Sidebar collapsible="icon" >
+    <Sidebar collapsible="icon">
       <SidebarHeader className={state === "expanded" ? "space-x-2 space-y-2.5 p-4" : ""}>
-        <Logo size={state === "expanded" ? isMobile ? "xl" : "lg" : "sm"} className={isMobile ? "ml-auto" : undefined} />
+        <Logo 
+          size={state === "expanded" ? "lg" : "sm"} 
+          align={isMobile ? "center" : (state === "expanded" ? "left" : "center")}
+          className={(isMobile || state === "collapsed") ? "mx-auto" : undefined} 
+        />
+        <CustomUserCard 
+          user={me} 
+          hideEmail 
+          onlyAvatar={!isExpanded && !isMobile}
+          className={isExpanded || isMobile ? "h-20 min-h-20" : "h-12 w-12 mx-auto border-none shadow-none bg-transparent hover:scale-110"}
+        />
       </SidebarHeader>
 
 <hr />

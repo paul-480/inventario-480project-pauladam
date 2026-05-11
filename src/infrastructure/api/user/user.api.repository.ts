@@ -5,13 +5,13 @@ import type { CreateUserSchema } from "@/infrastructure/user/user.schema";
 import { userMaper } from "@/infrastructure/user/user.maper";
 import type { UserRoleValue } from "@/domain/shared/user-role.vo";
 import { axiosClient } from "../axios.client";
-import type { UserResponseDto } from "@/application/user/user.dto";
 
 export const UserApiRepository: UserRepository = {
 
-    getUserById: async (id: string): Promise<UserResponseDto | null> => {
+    getUserById: async (id: string): Promise<User | null> => {
         const response = await axiosClient.get(`/users/${id}`);
-        return response.data as UserResponseDto | null;
+        if (!response.data) return null;
+        return userMaper.toDomain(response.data);
     },
     getUsers: async (page: number, limit: number, isActive?: boolean, role?: UserRoleValue): Promise<User[]> => {
         const response = await axiosClient.get(`/users?page=${page}&limit=${limit} ${isActive !== undefined ? `&isActive=${isActive}` : ''} ${role !== undefined ? `&role=${role}` : ''}`);

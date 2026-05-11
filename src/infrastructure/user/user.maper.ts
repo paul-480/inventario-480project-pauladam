@@ -10,7 +10,7 @@ export const userMaper = {
             surname: raw.surname,
             email: raw.email,
             role: new UserRole(raw.role as "ROLE_ADMIN" | "ROLE_EMPLOYEE"),
-            isActive: raw.is_active,
+            isActive: raw.is_active ?? (raw as any).active ?? true,
         };
     },
     toDomainList: (raw: UserResponseDto[]): User[] => {

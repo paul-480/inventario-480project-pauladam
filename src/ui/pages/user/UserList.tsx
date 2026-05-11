@@ -1,15 +1,29 @@
 
-import { Button } from "@/ui/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/ui/components/ui/card";
 import { Skeleton } from "@/ui/components/ui/skeleton";
-import { Input } from "@/ui/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/ui/components/ui/toggle-group";
 import CustomUserCard from "@/ui/components/user/CustomUserCard";
 import { useUsers, type FilterOption } from "@/ui/hooks/user/useUsers";
 import { SearchIcon } from "lucide-react";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/ui/components/ui/input-group";
+
+
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 const UserList = () => {
-  const { filteredUsers: users, loading, filter, setFilter } = useUsers();
+  const { filteredUsers: users, loading, filter, setFilter, setSearchText } = useUsers();
+  const { scrollY } = useScroll();
+
+  // Animation values based on scroll
+  // When scroll is 0, width is 66% (col-span-2 equivalent). When scroll is 100px, it expands to 100%.
+  const maxWidth = useTransform(scrollY, [0, 100], ["1200px", "100%"]);
+  const paddingX = useTransform(scrollY, [0, 100], ["0rem", "2rem"]);
+  const borderRadius = useTransform(scrollY, [0, 100], ["1.5rem", "1.5rem"]);
+  const backgroundColor = useTransform(
+    scrollY,
+    [0, 100],
+    ["var(--card)", "var(--background)"]
+  );
 
   const skeletons = Array.from({ length: 6 }).map((_, i) => (
     <Card key={i} className="col-span-1 ">
@@ -20,27 +34,67 @@ const UserList = () => {
   ));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full auto-rows-fr">
-      <h1>Usuarios</h1>
-      <Card className="col-span-2 ">
-        <CardTitle>
-          <h2>Filtrar Usuarios</h2>
-        </CardTitle>
-        <CardContent className="flex gap-2 items-center">
-          <ToggleGroup type="single" value={filter} onValueChange={(value) => setFilter(value as FilterOption)}>
-            <ToggleGroupItem value="ALL">Todos</ToggleGroupItem>
-            <ToggleGroupItem value="INACTIVE">Inactivos</ToggleGroupItem>
-            <ToggleGroupItem value="ADMIN">Administradores</ToggleGroupItem>
-          </ToggleGroup>
-          <Input placeholder="Buscar…" />
-          <Button variant="outline" size="icon">
-            <SearchIcon />
-          </Button>
-        </CardContent>
-      </Card>
-      {loading ? skeletons : users.map(user => (
-        <CustomUserCard key={user.id} user={user} />
-      ))}
+    <div className="flex flex-col gap-6 w-full pb-10">
+      <div className="px-4 pt-4">
+        <h1 className="text-4xl font-bold tracking-tight">Usuarios</h1>
+      </div>
+
+      <div className="sticky top-0 z-30 py-4 -mx-4 px-4 backdrop-blur-md bg-background/60 border-b border-transparent transition-colors duration-300">
+        <motion.div
+          style={{ maxWidth, borderRadius }}
+          className="mx-auto w-full overflow-hidden shadow-lg border border-border"
+        >
+          <Card className="border-none rounded-none shadow-none">
+            <CardContent className="flex flex-col md:flex-row gap-4 items-center p-4">
+              <ToggleGroup
+                type="single"
+                variant="outline"
+                value={filter}
+                onValueChange={(value) => setFilter(value as FilterOption)}
+                className="justify-start"
+              >
+                <ToggleGroupItem value="ALL" className="rounded-full">Todos</ToggleGroupItem>
+                <ToggleGroupItem value="INACTIVE" className="rounded-full">Inactivos</ToggleGroupItem>
+                <ToggleGroupItem value="ADMIN" className="rounded-full">Administradores</ToggleGroupItem>
+              </ToggleGroup>
+
+              <div className="flex-1 w-full">
+                <InputGroup>
+                  <InputGroupInput
+                    type="text"
+                    placeholder="Buscar por nombre o email…"
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="bg-accent/5 rounded-full"
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <SearchIcon className="text-muted-foreground" />
+                  </InputGroupAddon>
+                </InputGroup>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 w-full auto-rows-fr px-4">
+        <AnimatePresence mode="popLayout">
+          {loading
+            ? skeletons
+            : users.map((user) => (
+                <motion.div
+                  key={user.id}
+                  layout
+                  className="h-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <CustomUserCard user={user} />
+                </motion.div>
+              ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

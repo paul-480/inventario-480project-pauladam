@@ -9,8 +9,8 @@ export interface User {
     isActive: boolean;
     role:      UserRole;
 }
-export const isAdmin = (user: User) => user.role.isAdmin();
-export const isActive = (user: User) => user.isActive;
+export const isAdmin = (user: User) => user?.role?.isAdmin?.() ?? false;
+export const isActive = (user: User) => user?.isActive ?? false;
 
 export const fullName = (user: User) => `${user.name} ${user.surname}`;
 

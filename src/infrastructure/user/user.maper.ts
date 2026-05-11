@@ -16,4 +16,5 @@ export const userMaper = {
     toDomainList: (raw: UserResponseDto[]): User[] => {
         return raw.map((user: UserResponseDto) => userMaper.toDomain(user));
     }
+    
 }

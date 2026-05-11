@@ -5,6 +5,7 @@ import Dashboard from '../pages/dashboard/Dashboard'
 import SidebarLayout from '../layouts/SidebarLayout'
 import UserDetail from '../pages/user/UserDetail'
 import UserList from '../pages/user/UserList'
+import AdminOnlyRoute from './AdminOnlyRoute'
 
 const AppRouter = () => {
   return (
@@ -14,9 +15,11 @@ const AppRouter = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Dashboard />} />
-            <Route path='/user/:id' element={<UserDetail />} />
             <Route path='/users' element={<UserList />} />
             <Route path='*' element={<div>404 Not Found</div>} />
+            <Route element={<AdminOnlyRoute/>}>
+            <Route path='/user/:id' element={<UserDetail paramUser={null}/>} />
+            </Route>
           </Route>
         </Route>
       </Routes>

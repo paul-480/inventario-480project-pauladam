@@ -1,5 +1,5 @@
 
-import { Card, CardContent, CardTitle } from "@/ui/components/ui/card";
+import { Card, CardContent } from "@/ui/components/ui/card";
 import { Skeleton } from "@/ui/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/ui/components/ui/toggle-group";
 import CustomUserCard from "@/ui/components/user/CustomUserCard";
@@ -14,16 +14,9 @@ const UserList = () => {
   const { filteredUsers: users, loading, filter, setFilter, setSearchText } = useUsers();
   const { scrollY } = useScroll();
 
-  // Animation values based on scroll
-  // When scroll is 0, width is 66% (col-span-2 equivalent). When scroll is 100px, it expands to 100%.
   const maxWidth = useTransform(scrollY, [0, 100], ["1200px", "100%"]);
-  const paddingX = useTransform(scrollY, [0, 100], ["0rem", "2rem"]);
   const borderRadius = useTransform(scrollY, [0, 100], ["1.5rem", "1.5rem"]);
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 100],
-    ["var(--card)", "var(--background)"]
-  );
+
 
   const skeletons = Array.from({ length: 6 }).map((_, i) => (
     <Card key={i} className="col-span-1 ">
@@ -39,7 +32,7 @@ const UserList = () => {
         <h1 className="text-4xl font-bold tracking-tight">Usuarios</h1>
       </div>
 
-      <div className="sticky top-0 z-30 py-4 -mx-4 px-4 backdrop-blur-md bg-background/60 border-b border-transparent transition-colors duration-300">
+      <div className="sticky top-0 z-30 py-4 -mx-4 px-4 backdrop-blur-md bg-background/60  border-2 rounded-2xl transition-colors duration-300">
         <motion.div
           style={{ maxWidth, borderRadius }}
           className="mx-auto w-full overflow-hidden shadow-lg border border-border"

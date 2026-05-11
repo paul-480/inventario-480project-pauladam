@@ -1,7 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UserApiRepository } from "@/infrastructure/api/user/user.api.repository";
 import { isAdmin, type User } from "@/domain/user/user.entity";
+import type { UpdateUserSchema } from "@/infrastructure/user/user.schema";
 import { GetUserByIdUseCase } from "@/application/user/use-cases/get-user-by-id.use-case";
 import { getAllUsersUseCase } from "@/application/user/use-cases/get-all-users.use-case";
 
@@ -16,10 +17,18 @@ export const useUsers = () => {
     // filter state
     const [filter, setFilter] = useState<FilterOption>("ALL");
     const [searchText, setSearchText] = useState("");
-    const getUserById = async (id: string) => {
+    const getUserById = useCallback(async (id: string) => {
         const user = await GetUserByIdUseCase(UserApiRepository, id);
         return user;
-    };
+    }, []);
+
+    const updateUser = useCallback(async (payload: UpdateUserSchema) => {
+        const updatedUser = await UserApiRepository.updateUser(payload);
+        if (updatedUser) {
+            setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+        }
+        return updatedUser;
+    }, []);
 
     // initial fetch
     useEffect(() => {
@@ -56,5 +65,5 @@ export const useUsers = () => {
         setFilteredUsers(result);
     }, [users, filter, searchText]);
 
-    return { filteredUsers, loading, getUserById, filter, setFilter, setSearchText };
+    return { filteredUsers, loading, getUserById, updateUser, filter, setFilter, setSearchText };
 };

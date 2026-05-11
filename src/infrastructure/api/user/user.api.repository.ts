@@ -1,7 +1,7 @@
 
 import type { User } from "@/domain/user/user.entity";
 import type { UserRepository } from "../../user/user.repository";
-import type { CreateUserSchema } from "@/infrastructure/user/user.schema";
+import type { CreateUserSchema, UpdateUserSchema } from "@/infrastructure/user/user.schema";
 import { userMaper } from "@/infrastructure/user/user.maper";
 import type { UserRoleValue } from "@/domain/shared/user-role.vo";
 import { axiosClient } from "../axios.client";
@@ -21,8 +21,14 @@ export const UserApiRepository: UserRepository = {
         const response = await axiosClient.post("/users ", user);
         return userMaper.toDomain(response.data);
     },
-    updateUser: async (user: CreateUserSchema): Promise<User | null> => {
-        const response = await axiosClient.put(`/users/${user.id}`, user);
+    updateUser: async (user: UpdateUserSchema): Promise<User | null> => {
+        const response = await axiosClient.put(`/users/${user.id}`, {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            is_active: user.is_active,
+            role: user.role,
+        });
         return userMaper.toDomain(response.data);
     },
     deleteUser: async (id: string): Promise<null> => {

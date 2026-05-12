@@ -33,5 +33,9 @@ export const ProjectApiRepository: ProjectRepository = {
     },
     deleteProject: async (id: string): Promise<void> => {
         await axiosClient.delete(`/projects/${id}`);
+    },
+    getProjectsByUserId: async (userId: string): Promise<Project[]> => {
+        const response = await axiosClient.get(`/users/${userId}/projects`);
+        return projectMapper.toDomainList(response.data);
     }
 }

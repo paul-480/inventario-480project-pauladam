@@ -1,8 +1,9 @@
 import type { CreateUserDto } from "@/application/user/user.dto";
 import { UserRole } from "../shared/user-role.vo";
+import type { Uuid } from "../shared/uuid.vo";
 
 export interface User {
-    id:        string;
+    id:        Uuid;
     name:      string;
     surname:   string;
     email:     string;

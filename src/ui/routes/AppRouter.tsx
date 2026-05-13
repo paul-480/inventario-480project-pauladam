@@ -6,6 +6,7 @@ import SidebarLayout from '../layouts/SidebarLayout'
 import UserDetail from '../pages/user/UserDetail'
 import UserList from '../pages/user/UserList'
 import AdminOnlyRoute from './AdminOnlyRoute'
+import ProjectsPage from '../pages/projects/ProjectsPage'
 
 const AppRouter = () => {
   return (
@@ -16,6 +17,7 @@ const AppRouter = () => {
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Dashboard />} />
             <Route path='/users' element={<UserList />} />
+            <Route path='/projects' element={<ProjectsPage />} />
             <Route path='*' element={<div>404 Not Found</div>} />
             <Route element={<AdminOnlyRoute/>}>
             <Route path='/user/:id' element={<UserDetail paramUser={null}/>} />

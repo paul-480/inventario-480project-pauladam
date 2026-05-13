@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const createSectorSchema = z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string().max(100),
 });
 
 export const updateSectorSchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string().max(100),
 });
 

@@ -2,22 +2,22 @@ import { z } from "zod";
 
 export const developmentLinkSchema = z.object({
     environment: z.enum(["STAGE", "PREPRODUCTION", "PRODUCTION"]),
-    url: z.string().url()
+    url: z.url()
 });
 
 export const createDevelopmentSchema = z.object({
-    id: z.string().uuid().optional(),
-    technology_id: z.string().uuid(),
+    id: z.uuid().optional(),
+    technology_id: z.uuid(),
     name: z.string().max(100),
     description: z.string().max(150),
-    url_repository: z.string().url()
+    url_repository: z.url()
 });
 
 export const updateDevelopmentSchema = z.object({
     name: z.string().max(100),
     description: z.string().max(150),
-    technology_id: z.string().uuid(),
-    url_repository: z.string().url(),
+    technology_id: z.uuid(),
+    url_repository: z.url(),
     links: z.array(developmentLinkSchema).optional()
 });
 

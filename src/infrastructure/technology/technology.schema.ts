@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const createTechnologySchema = z.object({
-    id: z.string().uuid().optional(),
+    id: z.uuid().optional(),
     name: z.string(),
 });
 
 export const updateTechnologySchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
 });
 

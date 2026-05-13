@@ -1,11 +1,12 @@
 import type { UserResponseDto } from "@/application/user/user.dto";
 import type { User } from "../../domain/user/user.entity";
 import { UserRole } from "@/domain/shared/user-role.vo";
+import { Uuid } from "@/domain/shared/uuid.vo";
 
 export const userMaper = {
     toDomain: (raw: UserResponseDto): User => {
         return {
-            id: raw.id,
+            id: new Uuid(raw.id),
             name: raw.name,
             surname: raw.surname,
             email: raw.email,

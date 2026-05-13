@@ -11,6 +11,7 @@ export const DevelopmentApiRepository: DevelopmentRepository = {
     },
     createProjectDevelopment: async (projectId: string, development: CreateDevelopmentSchema): Promise<Development | null> => {
         const response = await axiosClient.post(`/projects/${projectId}/developments`, development);
+        if (!response.data?.id || !response.data?.technology) return null;
         return developmentMapper.toDomain(response.data);
     },
     updateProjectDevelopment: async (projectId: string, developmentId: string, development: UpdateDevelopmentSchema): Promise<Development | null> => {

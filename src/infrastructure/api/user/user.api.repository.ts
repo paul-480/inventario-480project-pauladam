@@ -19,6 +19,7 @@ export const UserApiRepository: UserRepository = {
     },
     createUser: async (user: CreateUserSchema): Promise<User | null> => {
         const response = await axiosClient.post("/users ", user);
+        if (!response.data?.id) return null;
         return userMaper.toDomain(response.data);
     },
     updateUser: async (user: UpdateUserSchema): Promise<User | null> => {
@@ -34,5 +35,16 @@ export const UserApiRepository: UserRepository = {
     deleteUser: async (id: string): Promise<null> => {
         const response = await axiosClient.delete(`/users/${id}`);
         return response.data;
+    },
+    getUsersByProjectId: async (projectId: string): Promise<User[]> => {
+        const response = await axiosClient.get(`/projects/${projectId}/users`);
+        return response.data.map((raw: any) => ({
+            id: raw.app_user_id,
+            name: raw.name,
+            surname: raw.surname,
+            email: "", // El endpoint no devuelve email
+            role: raw.role.name,
+            isActive: raw.is_user_active
+        }));
     }
 }

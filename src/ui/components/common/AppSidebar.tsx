@@ -22,7 +22,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import Logo from "./Logo"
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/ui/hooks/use-mobile";
 import { useAuth } from "@/application/auth/useAuth";
 import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";

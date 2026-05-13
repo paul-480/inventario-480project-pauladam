@@ -16,6 +16,7 @@ export const TechnologyApiRepository: TechnologyRepository = {
     },
     createTechnology: async (technology: CreateTechnologySchema): Promise<Technology | null> => {
         const response = await axiosClient.post("/technologies", technology);
+        if (!response.data?.id) return null;
         return technologyMapper.toDomain(response.data);
     },
     updateTechnology: async (technology: UpdateTechnologySchema): Promise<Technology | null> => {

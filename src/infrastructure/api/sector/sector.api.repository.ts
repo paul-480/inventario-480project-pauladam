@@ -16,6 +16,7 @@ export const SectorApiRepository: SectorRepository = {
     },
     createSector: async (sector: CreateSectorSchema): Promise<Sector | null> => {
         const response = await axiosClient.post("/sectors", sector);
+        if (!response.data?.id) return null;
         return sectorMapper.toDomain(response.data);
     },
     updateSector: async (sector: UpdateSectorSchema): Promise<Sector | null> => {

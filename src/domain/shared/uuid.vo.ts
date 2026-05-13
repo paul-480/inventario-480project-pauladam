@@ -2,7 +2,7 @@ import {  v7 as uuidv7, validate } from 'uuid';
 import { InvalidUUIDerror } from './errors/invalid-uuid.error';
 
 export class Uuid{
-    value: string;
+    readonly value: string;
 
     constructor(uuid: string) {
     this.value = uuid;

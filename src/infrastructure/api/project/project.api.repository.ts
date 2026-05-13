@@ -11,11 +11,12 @@ export const ProjectApiRepository: ProjectRepository = {
         return projectMapper.toDomain(response.data);
     },
     getProjects: async (): Promise<Project[]> => {
-        const response = await axiosClient.get("/projects");
+        const response = await axiosClient.get("/projects?page_size=100");
         return projectMapper.toDomainList(response.data);
     },
     createProject: async (project: CreateProjectSchema): Promise<Project | null> => {
         const response = await axiosClient.post("/projects", project);
+        if (!response.data?.id || !response.data?.client) return null;
         return projectMapper.toDomain(response.data);
     },
     updateProject: async (project: UpdateProjectSchema): Promise<Project | null> => {
@@ -33,5 +34,9 @@ export const ProjectApiRepository: ProjectRepository = {
     },
     deleteProject: async (id: string): Promise<void> => {
         await axiosClient.delete(`/projects/${id}`);
+    },
+    getProjectsByUserId: async (userId: string): Promise<Project[]> => {
+        const response = await axiosClient.get(`/users/${userId}/projects?page_size=100`);
+        return projectMapper.toDomainList(response.data);
     }
 }

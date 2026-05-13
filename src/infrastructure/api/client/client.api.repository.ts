@@ -16,6 +16,7 @@ export const ClientApiRepository: ClientRepository = {
     },
     createClient: async (client: CreateClientSchema): Promise<Client | null> => {
         const response = await axiosClient.post("/clients", client);
+        if (!response.data?.id || !response.data?.sector) return null;
         return clientMapper.toDomain(response.data);
     },
     updateClient: async (client: UpdateClientSchema): Promise<Client | null> => {

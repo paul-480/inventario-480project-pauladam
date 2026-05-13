@@ -46,7 +46,7 @@ export const useProjects = () => {
 
 useEffect(() => {
     if(!me) return;
-    GetUserProjectsUseCase(repository, me.id.toString())
+    GetUserProjectsUseCase(repository, me.id.value)
         .then((myProjects) => {
             setMyProjects(myProjects);
             setLoading(false);

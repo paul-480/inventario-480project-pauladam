@@ -11,6 +11,7 @@ export const ContactApiRepository: ContactRepository = {
     },
     createClientContact: async (clientId: string, contact: CreateContactSchema): Promise<Contact | null> => {
         const response = await axiosClient.post(`/clients/${clientId}/contacts`, contact);
+        if (!response.data?.id) return null;
         return contactMapper.toDomain(response.data);
     },
     updateClientContact: async (clientId: string, contactId: string, contact: UpdateContactSchema): Promise<Contact | null> => {

@@ -14,10 +14,12 @@ export const TimeEntryApiRepository: TimeEntryRepository = {
         params.append('limit', limit.toString());
         
         const response = await axiosClient.get(`/users/${userId}/time-entries?${params.toString()}`);
-        return timeEntryMapper.toDomainList(response.data);
+        const raw = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+        return timeEntryMapper.toDomainList(raw);
     },
     createTimeEntry: async (userId: string, entry: CreateTimeEntrySchema): Promise<TimeEntry | null> => {
         const response = await axiosClient.post(`/users/${userId}/time-entries`, entry);
+        if (!response.data?.id || !response.data?.project) return null;
         return timeEntryMapper.toDomain(response.data);
     },
     getProjectTimeEntries: async (projectId: string, params?: {

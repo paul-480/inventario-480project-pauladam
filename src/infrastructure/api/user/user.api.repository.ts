@@ -19,6 +19,7 @@ export const UserApiRepository: UserRepository = {
     },
     createUser: async (user: CreateUserSchema): Promise<User | null> => {
         const response = await axiosClient.post("/users ", user);
+        if (!response.data?.id) return null;
         return userMaper.toDomain(response.data);
     },
     updateUser: async (user: UpdateUserSchema): Promise<User | null> => {

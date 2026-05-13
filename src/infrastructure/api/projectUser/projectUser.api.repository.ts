@@ -10,6 +10,7 @@ export const ProjectUserApiRepository: ProjectUserRepository = {
     },
     addProjectUser: async (projectId: string, user: AddProjectUserSchema): Promise<ProjectUser | null> => {
         const response = await axiosClient.post(`/projects/${projectId}/users`, user);
+        if (!response.data?.app_user_id || !response.data?.role) return null;
         return projectUserMapper.toDomain(response.data);
     },
     updateProjectUsers: async (projectId: string, user: AddProjectUserSchema): Promise<ProjectUser | null> => {

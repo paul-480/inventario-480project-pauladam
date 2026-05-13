@@ -1,13 +1,39 @@
 import MainProfileCard from '@/ui/components/user/MainProfileCard';
 import { Skeleton } from '@/ui/components/ui/skeleton';
+import { Button } from '@/ui/components/ui/button';
 import { useMe } from '@/ui/hooks/user/useMe';
 import { useProjects } from '@/ui/hooks/project/useProjects';
 import { columns } from '@/ui/components/projects/table/columns';
 import { DataTable } from '@/ui/components/projects/table/data-table';
+import { WeeklyHoursChart } from '@/ui/components/dashboard/WeeklyHoursChart';
+import { NewTimeEntryModal } from '@/ui/components/dashboard/NewTimeEntryModal';
+import { useUserTimeEntries } from '@/ui/hooks/useTimeEntries';
+import { useMemo, useState } from 'react';
+import { Plus } from 'lucide-react';
 
 const Dashboard = () => {
   const { me, loading } = useMe();
   const { myProjects, loading: projectsLoading } = useProjects();
+
+  const { from, to } = useMemo(() => {
+    const today = new Date();
+    const dow = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((dow + 6) % 7));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    return {
+      from: monday.toISOString().slice(0, 10),
+      to: sunday.toISOString().slice(0, 10),
+    };
+  }, []);
+
+  const { timeEntries, loading: entriesLoading, refetch } = useUserTimeEntries(
+    me?.id.value ?? null,
+    { from, to, limit: 100 }
+  );
+
+  const [timeEntryModalOpen, setTimeEntryModalOpen] = useState(false);
 
   if (loading) {
     return (
@@ -66,6 +92,10 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold tracking-tight">
             Mis Proyectos
           </h2>
+          <Button size="sm" className="gap-1.5" onClick={() => setTimeEntryModalOpen(true)}>
+            <Plus className="size-4" />
+            Registrar Horas
+          </Button>
         </div>
         
         {projectsLoading ? (
@@ -80,6 +110,18 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      <WeeklyHoursChart entries={timeEntries} loading={entriesLoading} />
+
+      {me && (
+        <NewTimeEntryModal
+          open={timeEntryModalOpen}
+          onOpenChange={setTimeEntryModalOpen}
+          userId={me.id.value}
+          projects={myProjects}
+          onSuccess={refetch}
+        />
+      )}
     </div>
   );
 };

@@ -21,7 +21,7 @@ export const MainProfileCard = ({ user,children}: ProfileProps) => {
 
   
   return (
-     <Card className="w-full mt-4">
+     <Card className="w-full pb-8">
         <CardHeader>
           <CardTitle className="flex items-center justify-center">{isMe ? "Tu Perfil" : "Perfil de Usuario"}</CardTitle>
         </CardHeader>

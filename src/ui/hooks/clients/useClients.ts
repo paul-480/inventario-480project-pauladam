@@ -1,0 +1,130 @@
+import { useState, useEffect, useCallback } from "react";
+import type { Client } from "@/domain/client/client.entity";
+import { ClientApiRepository } from "@/infrastructure/api/client/client.api.repository";
+import type { CreateClientSchema, UpdateClientSchema } from "@/infrastructure/client/client.schema";
+
+export function useClients() {
+    const [clients, setClients] = useState<Client[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const fetchClients = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await ClientApiRepository.getClients();
+            setClients(data);
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error("Error fetching clients"));
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchClients();
+    }, [fetchClients]);
+
+    const createClient = useCallback(async (client: CreateClientSchema) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const newClient = await ClientApiRepository.createClient(client);
+            if (newClient) {
+                setClients(prev => [...prev, newClient]);
+            }
+            return newClient;
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error("Error creating client"));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const updateClient = useCallback(async (client: UpdateClientSchema) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const updated = await ClientApiRepository.updateClient(client);
+            if (updated) {
+                setClients(prev => prev.map(c => c.id.value === updated.id.value ? updated : c));
+            }
+            return updated;
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error("Error updating client"));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const deleteClient = useCallback(async (id: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            await ClientApiRepository.deleteClient(id);
+            setClients(prev => prev.filter(c => c.id.value !== id));
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error("Error deleting client"));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const softDeleteClient = useCallback(async (id: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            await ClientApiRepository.softDeleteClient(id);
+            setClients(prev => prev.map(c => c.id.value === id ? { ...c, isActive: false } : c));
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error("Error soft deleting client"));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return {
+        clients,
+        loading,
+        error,
+        refetch: fetchClients,
+        createClient,
+        updateClient,
+        deleteClient,
+        softDeleteClient
+    };
+}
+
+export function useClient(clientId: string | null) {
+    const [client, setClient] = useState<Client | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    useEffect(() => {
+        if (!clientId) {
+            setClient(null);
+            return;
+        }
+
+        const fetchClient = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await ClientApiRepository.getClientById(clientId);
+                setClient(data);
+            } catch (err) {
+                setError(err instanceof Error ? err : new Error("Error fetching client"));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchClient();
+    }, [clientId]);
+
+    return { client, loading, error };
+}

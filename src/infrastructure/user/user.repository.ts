@@ -1,12 +1,12 @@
 import type { User } from "@/domain/user/user.entity";
-import type { CreateUserSchema } from "./user.schema";
+import type { CreateUserSchema, UpdateUserSchema } from "./user.schema";
 import type { UserRoleValue } from "@/domain/shared/user-role.vo";
-import type { UserResponseDto } from "@/application/user/user.dto";
 
 export interface UserRepository {
-    getUserById(id: string): Promise<UserResponseDto | null>;
+    getUserById(id: string): Promise<User | null>;
     getUsers(page: number, limit: number, isActive?: boolean, role?: UserRoleValue): Promise<User[]>;
+    getUsersByProjectId(projectId: string): Promise<User[]>;
     createUser(user: CreateUserSchema): Promise<User | null>;
-    updateUser(user: CreateUserSchema): Promise<User | null>;
+    updateUser(user: UpdateUserSchema): Promise<User | null>;
     deleteUser(id: string): Promise<null>;
 }

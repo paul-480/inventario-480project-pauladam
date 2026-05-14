@@ -8,6 +8,16 @@ export interface CreateUserDto {
     password: string;
     role:     UserRoleValue;
 }
+
+export interface UpdateUserDto {
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
+    is_active: boolean;
+    role: UserRoleValue;
+}
+
 export interface UserResponseDto {
     id: string;
     name: string;
@@ -15,4 +25,15 @@ export interface UserResponseDto {
     email: string;
     role: string;
     is_active: boolean;
+}
+
+export interface ProjectUserResponseDto {
+    app_user_id: string;
+    name: string;
+    surname: string;
+    is_user_active: boolean;
+    role: {
+        id: string;
+        name: string;
+    };
 }

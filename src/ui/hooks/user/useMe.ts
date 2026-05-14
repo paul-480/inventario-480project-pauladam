@@ -4,7 +4,7 @@ import { UserApiRepository } from "@/infrastructure/api/user/user.api.repository
 import  { type User } from "@/domain/user/user.entity";
 
 export const useMe = () => {
-    const [me, setMe] = useState<User>({name: ""} as User);
+    const [me, setMe] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
 

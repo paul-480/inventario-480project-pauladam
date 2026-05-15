@@ -2,6 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import type { Contact } from "@/domain/contact/contact.entity";
 import { ContactApiRepository } from "@/infrastructure/api/contact/contact.api.repository";
 import type { CreateContactSchema, UpdateContactSchema } from "@/infrastructure/contact/contact.schema";
+import { GetClientContactsUseCase } from "@/application/client/use-cases/get-client-contacts.use-case";
+import { CreateContactUseCase } from "@/application/client/use-cases/create-contact.use-case";
+import { UpdateContactUseCase } from "@/application/client/use-cases/update-contact.use-case";
+import { UpdateContactMainUseCase } from "@/application/client/use-cases/update-contact-main.use-case";
+import { DeleteContactUseCase } from "@/application/client/use-cases/delete-contact.use-case";
+
+const repository = ContactApiRepository;
 
 export function useClientContacts(clientId: string | null) {
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -17,7 +24,7 @@ export function useClientContacts(clientId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const data = await ContactApiRepository.getClientContacts(clientId);
+            const data = await GetClientContactsUseCase(repository, clientId);
             setContacts(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching contacts"));
@@ -36,7 +43,7 @@ export function useClientContacts(clientId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const newContact = await ContactApiRepository.createClientContact(clientId, contact);
+            const newContact = await CreateContactUseCase(repository, clientId, contact);
             if (newContact) {
                 setContacts(prev => [...prev, newContact]);
             }
@@ -55,7 +62,7 @@ export function useClientContacts(clientId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const updated = await ContactApiRepository.updateClientContact(clientId, contactId, contact);
+            const updated = await UpdateContactUseCase(repository, clientId, contactId, contact);
             if (updated) {
                 setContacts(prev => prev.map(c => c.id.value === contactId ? updated : c));
             }
@@ -74,7 +81,7 @@ export function useClientContacts(clientId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            await ContactApiRepository.updateContactMainStatus(clientId, contactId);
+            await UpdateContactMainUseCase(repository, clientId, contactId);
             setContacts(prev => prev.map(c => ({
                 ...c,
                 isMain: c.id.value === contactId ? true : false
@@ -93,7 +100,7 @@ export function useClientContacts(clientId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            await ContactApiRepository.deleteClientContact(clientId, contactId);
+            await DeleteContactUseCase(repository, clientId, contactId);
             setContacts(prev => prev.filter(c => c.id.value !== contactId));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting contact"));

@@ -16,6 +16,11 @@ export const ContactApiRepository: ContactRepository = {
     },
     updateClientContact: async (clientId: string, contactId: string, contact: UpdateContactSchema): Promise<Contact | null> => {
         const response = await axiosClient.put(`/clients/${clientId}/contacts/${contactId}`, contact);
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/clients/${clientId}/contacts`);
+            const found = (refetched.data as any[])?.find((c: any) => c.id === contactId);
+            return found ? contactMapper.toDomain(found) : null;
+        }
         return contactMapper.toDomain(response.data);
     },
     updateContactMainStatus: async (clientId: string, contactId: string): Promise<void> => {

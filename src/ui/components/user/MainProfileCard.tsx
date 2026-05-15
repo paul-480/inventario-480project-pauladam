@@ -4,7 +4,7 @@ import { Users, Mail } from "lucide-react"
 import CustomAvatar from "./CustomAvatar"
 import { Badge } from "../ui/badge"
 import { useMe } from "@/ui/hooks/user/useMe"
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import Dashboard from "@/ui/pages/dashboard/Dashboard"
 import type { ReactNode } from "react"
 

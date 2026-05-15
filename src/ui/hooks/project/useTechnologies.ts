@@ -2,6 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import type { Technology } from "@/domain/technology/technology.entity";
 import { TechnologyApiRepository } from "@/infrastructure/api/technology/technology.api.repository";
 import type { CreateTechnologySchema, UpdateTechnologySchema } from "@/infrastructure/technology/technology.schema";
+import { GetAllTechnologiesUseCase } from "@/application/technology/use-cases/get-all-technologies.use-case";
+import { GetTechnologyByIdUseCase } from "@/application/technology/use-cases/get-technology-by-id.use-case";
+import { CreateTechnologyUseCase } from "@/application/technology/use-cases/create-technology.use-case";
+import { UpdateTechnologyUseCase } from "@/application/technology/use-cases/update-technology.use-case";
+import { DeleteTechnologyUseCase } from "@/application/technology/use-cases/delete-technology.use-case";
+
+const repository = TechnologyApiRepository;
 
 export function useTechnologies() {
     const [technologies, setTechnologies] = useState<Technology[]>([]);
@@ -12,7 +19,7 @@ export function useTechnologies() {
         setLoading(true);
         setError(null);
         try {
-            const data = await TechnologyApiRepository.getTechnologies();
+            const data = await GetAllTechnologiesUseCase(repository);
             setTechnologies(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching technologies"));
@@ -29,7 +36,7 @@ export function useTechnologies() {
         setLoading(true);
         setError(null);
         try {
-            const newTech = await TechnologyApiRepository.createTechnology(technology);
+            const newTech = await CreateTechnologyUseCase(repository, technology);
             if (newTech) {
                 setTechnologies(prev => [...prev, newTech]);
             }
@@ -46,7 +53,7 @@ export function useTechnologies() {
         setLoading(true);
         setError(null);
         try {
-            const updated = await TechnologyApiRepository.updateTechnology(technology);
+            const updated = await UpdateTechnologyUseCase(repository, technology);
             if (updated) {
                 setTechnologies(prev => prev.map(t => t.id.value === updated.id.value ? updated : t));
             }
@@ -63,7 +70,7 @@ export function useTechnologies() {
         setLoading(true);
         setError(null);
         try {
-            await TechnologyApiRepository.deleteTechnology(id);
+            await DeleteTechnologyUseCase(repository, id);
             setTechnologies(prev => prev.filter(t => t.id.value !== id));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting technology"));
@@ -99,7 +106,7 @@ export function useTechnology(technologyId: string | null) {
             setLoading(true);
             setError(null);
             try {
-                const data = await TechnologyApiRepository.getTechnologyById(technologyId);
+                const data = await GetTechnologyByIdUseCase(repository, technologyId);
                 setTechnology(data);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error("Error fetching technology"));

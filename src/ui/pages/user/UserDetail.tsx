@@ -1,23 +1,32 @@
 import type { User } from "@/domain/user/user.entity";
 import { isAdmin } from "@/domain/user/user.entity";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit, KeyRound, Trash2 } from "lucide-react";
 import { Badge } from "@/ui/components/ui/badge";
 import { Button } from "@/ui/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/ui/card";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/ui/dialog";
 import { Skeleton } from "@/ui/components/ui/skeleton";
 import CustomAvatar from "@/ui/components/user/CustomAvatar";
 import { useMe } from "@/ui/hooks/user/useMe";
 import { useUsers } from "@/ui/hooks/user/useUsers";
+import { useAuth } from "@/application/auth/useAuth";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ModifyUserForm from "@/ui/components/forms/ModifyUserForm";
+import { ChangePasswordModal } from "@/ui/components/user/ChangePasswordModal";
+import { UserApiRepository } from "@/infrastructure/api/user/user.api.repository";
 
 const UserDetail = ({ paramUser }: { paramUser: User | null }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const { getUserById } = useUsers();
     const { me } = useMe();
+    const { isAdmin: viewerIsAdminFlag } = useAuth();
 
     useEffect(() => {
         if (paramUser) {
@@ -38,7 +47,7 @@ const UserDetail = ({ paramUser }: { paramUser: User | null }) => {
         );
     }
 
-    const isOwnProfile = me?.id === user.id;
+    const isOwnProfile = me?.id.value === user.id.value;
     const canEdit = !!me && (isAdmin(me) || isOwnProfile);
     const backPath = isOwnProfile ? "/" : "/users";
 
@@ -53,15 +62,35 @@ const UserDetail = ({ paramUser }: { paramUser: User | null }) => {
                         {isOwnProfile ? "Mi Perfil" : "Detalle de Personal"}
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400">
-                        {isOwnProfile ? "Tu informacion personal" : "Informacion completa del empleado"}
+                        {isOwnProfile ? "Tu informacion personal y proyectos" : "Informacion completa del empleado"}
                     </p>
                 </div>
+                {canEdit && (
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="gap-1.5 shrink-0" onClick={() => setPasswordModalOpen(true)}>
+                            <KeyRound className="size-4" />
+                            Cambiar Contraseña
+                        </Button>
+                        {viewerIsAdminFlag && !isOwnProfile && (
+                            <Button variant="destructive" size="sm" className="gap-1.5 shrink-0" onClick={() => setDeleteConfirmOpen(true)}>
+                                <Trash2 className="size-4" />
+                                Eliminar
+                            </Button>
+                        )}
+                    </div>
+                )}
             </div>
 
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between gap-3">
                         <CardTitle>Informacion Personal</CardTitle>
+                        {canEdit && !isEditing && (
+                            <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
+                                <Edit className="mr-1.5 h-4 w-4" />
+                                Editar
+                            </Button>
+                        )}
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -91,11 +120,50 @@ const UserDetail = ({ paramUser }: { paramUser: User | null }) => {
                                     </div>
                                 </div>
                             </div>
-                            {canEdit && <ModifyUserForm user={user} />}
+                            {canEdit && <ModifyUserForm user={user} isOwnProfile={isOwnProfile} viewerIsAdmin={!!me && isAdmin(me)} isEditing={isEditing} onEditingChange={setIsEditing} onSuccess={(updated) => setUser(updated)} />}
                         </div>
                     </div>
                 </CardContent>
             </Card>
+
+            {canEdit && (
+                <ChangePasswordModal
+                    open={passwordModalOpen}
+                    onOpenChange={setPasswordModalOpen}
+                    userId={user.id.value}
+                    isAdminOverride={!isOwnProfile && !!me && isAdmin(me)}
+                />
+            )}
+
+            <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+                <DialogContent className="sm:max-w-sm">
+                    <DialogHeader>
+                        <DialogTitle>¿Eliminar usuario?</DialogTitle>
+                    </DialogHeader>
+                    <p className="text-sm text-muted-foreground">
+                        Esta acción es irreversible. Se eliminará a <strong>{user.name} {user.surname}</strong> permanentemente.
+                    </p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)} disabled={deleteLoading}>Cancelar</Button>
+                        <Button
+                            variant="destructive"
+                            disabled={deleteLoading}
+                            onClick={async () => {
+                                setDeleteLoading(true);
+                                try {
+                                    await UserApiRepository.deleteUser(user.id.value);
+                                    navigate("/users");
+                                } catch {
+                                    setDeleteLoading(false);
+                                    setDeleteConfirmOpen(false);
+                                }
+                            }}
+                        >
+                            {deleteLoading ? "Eliminando..." : "Eliminar"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

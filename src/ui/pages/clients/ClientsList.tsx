@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
-import { useProjects } from "@/ui/hooks/project/useProjects";
-import { ProjectCard } from "@/ui/components/projects/ProjectCard";
-import { NewProjectModal } from "@/ui/components/projects/NewProjectModal";
+import { useClients } from "@/ui/hooks/clients/useClients";
+import { ClientCard } from "@/ui/components/clients/ClientCard";
+import { NewClientModal } from "@/ui/components/clients/NewClientModal";
 import { Skeleton } from "@/ui/components/ui/skeleton";
 import { Button } from "@/ui/components/ui/button";
 import { Card, CardContent } from "@/ui/components/ui/card";
@@ -12,8 +12,8 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
-const ProjectsPage = () => {
-    const { projects, loading } = useProjects();
+const ClientsList = () => {
+    const { clients, loading, refetch } = useClients();
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
     const [modalOpen, setModalOpen] = useState(false);
@@ -23,43 +23,42 @@ const ProjectsPage = () => {
     const borderRadius = useTransform(scrollY, [0, 100], ["1.5rem", "1.5rem"]);
 
     const filtered = useMemo(() => {
-        return projects.filter((p) => {
+        return clients.filter((c) => {
             const matchesSearch =
                 search.trim() === "" ||
-                p.name.toLowerCase().includes(search.toLowerCase()) ||
-                p.client.name.toLowerCase().includes(search.toLowerCase());
+                c.name.toLowerCase().includes(search.toLowerCase()) ||
+                c.sector?.name.toLowerCase().includes(search.toLowerCase());
 
             const matchesStatus =
                 statusFilter === "ALL" ||
-                (statusFilter === "ACTIVE" && p.isActive) ||
-                (statusFilter === "INACTIVE" && !p.isActive);
+                (statusFilter === "ACTIVE" && c.isActive) ||
+                (statusFilter === "INACTIVE" && !c.isActive);
 
             return matchesSearch && matchesStatus;
         });
-    }, [projects, search, statusFilter]);
+    }, [clients, search, statusFilter]);
 
-    const skeletons = Array.from({ length: 4 }).map((_, i) => (
+    const skeletons = Array.from({ length: 6 }).map((_, i) => (
         <Card key={i} className="col-span-1">
             <CardContent className="p-4">
-                <Skeleton className="h-28 w-full" />
+                <Skeleton className="h-16 w-full" />
             </CardContent>
         </Card>
     ));
 
-    const handleSuccess = () => {
-        window.location.reload();
-    };
-
     return (
         <div className="flex flex-col gap-6 w-full pb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 pt-4">
-                <h1 className="text-4xl font-bold tracking-tight">Proyectos</h1>
+                <div>
+                    <h1 className="text-4xl font-bold tracking-tight">Clientes</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Gestiona los clientes de la empresa</p>
+                </div>
                 <Button
                     onClick={() => setModalOpen(true)}
                     className="gap-1.5 self-start sm:self-auto"
                 >
                     <Plus className="size-4" />
-                    Nuevo Proyecto
+                    Nuevo Cliente
                 </Button>
             </div>
 
@@ -86,7 +85,7 @@ const ProjectsPage = () => {
                                 <InputGroup>
                                     <InputGroupInput
                                         type="text"
-                                        placeholder="Buscar por nombre del proyecto o cliente…"
+                                        placeholder="Buscar por nombre o sector…"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                         className="bg-accent/5 rounded-full"
@@ -101,7 +100,7 @@ const ProjectsPage = () => {
                 </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full auto-rows-fr px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full auto-rows-fr px-4">
                 <AnimatePresence mode="popLayout">
                     {loading
                         ? skeletons
@@ -113,12 +112,12 @@ const ProjectsPage = () => {
                                 animate={{ opacity: 1 }}
                                 className="col-span-full text-center text-muted-foreground py-16"
                             >
-                                No se encontraron proyectos con los filtros aplicados.
+                                No se encontraron clientes con los filtros aplicados.
                             </motion.div>
                         )
-                        : filtered.map((project) => (
+                        : filtered.map((client) => (
                             <motion.div
-                                key={project.id.value}
+                                key={client.id.value}
                                 layout
                                 className="h-full"
                                 initial={{ opacity: 0, y: 20 }}
@@ -126,7 +125,7 @@ const ProjectsPage = () => {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <ProjectCard project={project} />
+                                <ClientCard client={client} />
                             </motion.div>
                         ))
                     }
@@ -135,17 +134,17 @@ const ProjectsPage = () => {
 
             {!loading && (
                 <p className="text-sm text-center text-muted-foreground pb-2">
-                    Mostrando {filtered.length} de {projects.length} proyectos
+                    Mostrando {filtered.length} de {clients.length} clientes
                 </p>
             )}
 
-            <NewProjectModal
+            <NewClientModal
                 open={modalOpen}
                 onOpenChange={setModalOpen}
-                onSuccess={handleSuccess}
+                onSuccess={refetch}
             />
         </div>
     );
 };
 
-export default ProjectsPage;
+export default ClientsList;

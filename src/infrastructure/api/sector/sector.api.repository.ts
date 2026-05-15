@@ -23,6 +23,11 @@ export const SectorApiRepository: SectorRepository = {
         const response = await axiosClient.put(`/sectors/${sector.id}`, {
             name: sector.name
         });
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/sectors/${sector.id}`);
+            if (!refetched.data) return null;
+            return sectorMapper.toDomain(refetched.data);
+        }
         return sectorMapper.toDomain(response.data);
     },
     deleteSector: async (id: string): Promise<void> => {

@@ -3,13 +3,15 @@ import { Skeleton } from '@/ui/components/ui/skeleton';
 import { Button } from '@/ui/components/ui/button';
 import { useMe } from '@/ui/hooks/user/useMe';
 import { useProjects } from '@/ui/hooks/project/useProjects';
-import { columns } from '@/ui/components/projects/table/columns';
+import { getDashboardColumns } from '@/ui/components/projects/table/dashboardColumns';
 import { DataTable } from '@/ui/components/projects/table/data-table';
 import { WeeklyHoursChart } from '@/ui/components/dashboard/WeeklyHoursChart';
 import { NewTimeEntryModal } from '@/ui/components/dashboard/NewTimeEntryModal';
 import { useUserTimeEntries } from '@/ui/hooks/useTimeEntries';
 import { useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import type { Project } from '@/domain/project/project.entity';
 
 const Dashboard = () => {
   const { me, loading } = useMe();
@@ -34,6 +36,21 @@ const Dashboard = () => {
   );
 
   const [timeEntryModalOpen, setTimeEntryModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const navigate = useNavigate();
+
+  const dashboardColumns = useMemo(
+    () => getDashboardColumns({
+      onRegisterHours: (project) => {
+        setSelectedProject(project);
+        setTimeEntryModalOpen(true);
+      },
+      onEdit: (project) => {
+        navigate(`/projects/${project.id.value}?isEditing=true`);
+      },
+    }),
+    [navigate]
+  );
 
   if (loading) {
     return (
@@ -92,7 +109,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold tracking-tight">
             Mis Proyectos
           </h2>
-          <Button size="sm" className="gap-1.5" onClick={() => setTimeEntryModalOpen(true)}>
+          <Button size="sm" className="gap-1.5" onClick={() => { setSelectedProject(null); setTimeEntryModalOpen(true); }}>
             <Plus className="size-4" />
             Registrar Horas
           </Button>
@@ -106,7 +123,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-             <DataTable columns={columns} data={myProjects} />
+            <DataTable columns={dashboardColumns} data={myProjects} />
           </div>
         )}
       </div>
@@ -116,9 +133,13 @@ const Dashboard = () => {
       {me && (
         <NewTimeEntryModal
           open={timeEntryModalOpen}
-          onOpenChange={setTimeEntryModalOpen}
+          onOpenChange={(open) => {
+            setTimeEntryModalOpen(open);
+            if (!open) setSelectedProject(null);
+          }}
           userId={me.id.value}
           projects={myProjects}
+          initialProjectId={selectedProject?.id.value}
           onSuccess={refetch}
         />
       )}

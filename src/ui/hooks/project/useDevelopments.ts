@@ -2,6 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import type { Development } from "@/domain/development/development.entity";
 import { DevelopmentApiRepository } from "@/infrastructure/api/development/development.api.repository";
 import type { CreateDevelopmentSchema, UpdateDevelopmentSchema } from "@/infrastructure/development/development.schema";
+import { GetProjectDevelopmentsUseCase } from "@/application/project/use-cases/get-project-developments.use-case";
+import { CreateDevelopmentUseCase } from "@/application/project/use-cases/create-development.use-case";
+import { UpdateDevelopmentUseCase } from "@/application/project/use-cases/update-development.use-case";
+import { DeleteDevelopmentUseCase } from "@/application/project/use-cases/delete-development.use-case";
+
+const repository = DevelopmentApiRepository;
 
 export function useProjectDevelopments(projectId: string | null) {
     const [developments, setDevelopments] = useState<Development[]>([]);
@@ -17,7 +23,7 @@ export function useProjectDevelopments(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const data = await DevelopmentApiRepository.getProjectDevelopments(projectId);
+            const data = await GetProjectDevelopmentsUseCase(repository, projectId);
             setDevelopments(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching developments"));
@@ -36,7 +42,7 @@ export function useProjectDevelopments(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const newDev = await DevelopmentApiRepository.createProjectDevelopment(projectId, development);
+            const newDev = await CreateDevelopmentUseCase(repository, projectId, development);
             if (newDev) {
                 setDevelopments(prev => [...prev, newDev]);
             }
@@ -55,7 +61,7 @@ export function useProjectDevelopments(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const updated = await DevelopmentApiRepository.updateProjectDevelopment(projectId, developmentId, development);
+            const updated = await UpdateDevelopmentUseCase(repository, projectId, developmentId, development);
             if (updated) {
                 setDevelopments(prev => prev.map(d => d.id.value === developmentId ? updated : d));
             }
@@ -74,7 +80,7 @@ export function useProjectDevelopments(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            await DevelopmentApiRepository.deleteProjectDevelopment(projectId, developmentId);
+            await DeleteDevelopmentUseCase(repository, projectId, developmentId);
             setDevelopments(prev => prev.filter(d => d.id.value !== developmentId));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting development"));

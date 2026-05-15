@@ -5,6 +5,7 @@ import { isAdmin, type User } from "@/domain/user/user.entity";
 import type { UpdateUserSchema } from "@/infrastructure/user/user.schema";
 import { GetUserByIdUseCase } from "@/application/user/use-cases/get-user-by-id.use-case";
 import { getAllUsersUseCase } from "@/application/user/use-cases/get-all-users.use-case";
+import { UpdateUserUseCase } from "@/application/user/use-cases/update-user.use-case";
 
 // Filter options
 export type FilterOption = "ALL" | "INACTIVE" | "ADMIN";
@@ -23,9 +24,9 @@ export const useUsers = () => {
     }, []);
 
     const updateUser = useCallback(async (payload: UpdateUserSchema) => {
-        const updatedUser = await UserApiRepository.updateUser(payload);
+        const updatedUser = await UpdateUserUseCase(UserApiRepository, payload);
         if (updatedUser) {
-            setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+            setUsers((prev) => prev.map((u) => (u.id.value === updatedUser.id.value ? updatedUser : u)));
         }
         return updatedUser;
     }, []);

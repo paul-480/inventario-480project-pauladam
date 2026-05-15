@@ -1,5 +1,5 @@
 import type { User } from "@/domain/user/user.entity";
-import type { CreateUserSchema, UpdateUserSchema } from "./user.schema";
+import type { AdminChangePasswordSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema } from "./user.schema";
 import type { UserRoleValue } from "@/domain/shared/user-role.vo";
 
 export interface UserRepository {
@@ -9,4 +9,6 @@ export interface UserRepository {
     createUser(user: CreateUserSchema): Promise<User | null>;
     updateUser(user: UpdateUserSchema): Promise<User | null>;
     deleteUser(id: string): Promise<null>;
+    changePassword(payload: ChangePasswordSchema): Promise<void>;
+    adminChangePassword(payload: AdminChangePasswordSchema): Promise<void>;
 }

@@ -4,7 +4,6 @@ import { ProjectApiRepository } from "@/infrastructure/api/project/project.api.r
 import { useCallback, useEffect, useState } from "react";
 import { GetUserProjectsUseCase } from "@/application/project/use-cases/get-user-projects.use-case"
 import { useMe } from "../user/useMe";
-import type { User } from "@/domain/user/user.entity";
 
 const repository = ProjectApiRepository
 
@@ -15,33 +14,23 @@ export const useProjects = () => {
     const [myProjects, setMyProjects] = useState<Project[]>([]);
     const {me} = useMe();
 
-    const projectsByUser= (user:User)=>{
-        useCallback(async ()=>{
-                 let newProjects:Project[] = []
-                 try {
-                    newProjects = await GetUserProjectsUseCase(repository, user.id.value)
-                 } catch (error) {
-                    console.log(error)
-                 } finally{
-                    setProjects(newProjects)
-                 }
-                
-            
-        },[user])
-    }
+    const fetchAllProjects = useCallback(async () => {
+        setLoading(true);
+        GetAllProjectsUseCase(repository)
+            .then((projects) => {
+                setProjects(projects);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error fetching all projects:", err);
+                setProjects([]);
+                setLoading(false);
+            });
+    }, []);
 
     useEffect(() => {
-    GetAllProjectsUseCase(repository)
-        .then((projects) => {
-            setProjects(projects);
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error("Error fetching all projects:", err);
-            setProjects([]);
-            setLoading(false);
-        });
-}, []);
+        fetchAllProjects();
+    }, [fetchAllProjects]);
 
 
 useEffect(() => {
@@ -58,5 +47,5 @@ useEffect(() => {
         });
 }, [me]);
 
-    return { projects, loading, myProjects, projectsByUser };
+    return { projects, loading, myProjects, refetch: fetchAllProjects };
 };

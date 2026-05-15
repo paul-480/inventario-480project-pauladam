@@ -2,6 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import type { TimeEntry, ProjectTimeEntry } from "@/domain/timeEntry/timeEntry.entity";
 import { TimeEntryApiRepository } from "@/infrastructure/api/timeEntry/timeEntry.api.repository";
 import type { CreateTimeEntrySchema, UpdateTimeEntrySchema } from "@/infrastructure/timeEntry/timeEntry.schema";
+import { GetProjectTimeEntriesUseCase } from "@/application/project/use-cases/get-project-time-entries.use-case";
+import { GetUserTimeEntriesUseCase } from "@/application/timeEntry/use-cases/get-user-time-entries.use-case";
+import { CreateTimeEntryUseCase } from "@/application/timeEntry/use-cases/create-time-entry.use-case";
+import { UpdateProjectTimeEntryUseCase } from "@/application/timeEntry/use-cases/update-project-time-entry.use-case";
+import { DeleteProjectTimeEntryUseCase } from "@/application/timeEntry/use-cases/delete-project-time-entry.use-case";
+
+const repository = TimeEntryApiRepository;
 
 export function useUserTimeEntries(userId: string | null, filters?: {
     from?: string;
@@ -20,7 +27,8 @@ export function useUserTimeEntries(userId: string | null, filters?: {
         setLoading(true);
         setError(null);
         try {
-            const data = await TimeEntryApiRepository.getUserTimeEntries(
+            const data = await GetUserTimeEntriesUseCase(
+                repository,
                 userId,
                 filters?.from,
                 filters?.to,
@@ -46,7 +54,7 @@ export function useUserTimeEntries(userId: string | null, filters?: {
         setLoading(true);
         setError(null);
         try {
-            const newEntry = await TimeEntryApiRepository.createTimeEntry(userId, entry);
+            const newEntry = await CreateTimeEntryUseCase(repository, userId, entry);
             if (newEntry) {
                 setTimeEntries(prev => [...prev, newEntry]);
             }
@@ -90,7 +98,7 @@ export function useProjectTimeEntries(projectId: string | null, filters?: {
         setLoading(true);
         setError(null);
         try {
-            const data = await TimeEntryApiRepository.getProjectTimeEntries(projectId, filters);
+            const data = await GetProjectTimeEntriesUseCase(repository, projectId, filters);
             setTimeEntries(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching project time entries"));
@@ -109,7 +117,7 @@ export function useProjectTimeEntries(projectId: string | null, filters?: {
         setLoading(true);
         setError(null);
         try {
-            const updated = await TimeEntryApiRepository.updateProjectTimeEntry(projectId, entryId, entry);
+            const updated = await UpdateProjectTimeEntryUseCase(repository, projectId, entryId, entry);
             if (updated) {
                 setTimeEntries(prev => prev.map(e => e.id.value === entryId ? updated : e));
             }
@@ -128,7 +136,7 @@ export function useProjectTimeEntries(projectId: string | null, filters?: {
         setLoading(true);
         setError(null);
         try {
-            await TimeEntryApiRepository.deleteProjectTimeEntry(projectId, entryId);
+            await DeleteProjectTimeEntryUseCase(repository, projectId, entryId);
             setTimeEntries(prev => prev.filter(e => e.id.value !== entryId));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting time entry"));

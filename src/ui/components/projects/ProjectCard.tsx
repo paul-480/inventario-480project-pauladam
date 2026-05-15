@@ -2,55 +2,60 @@ import type { Project } from "@/domain/project/project.entity";
 import { Badge } from "@/ui/components/ui/badge";
 import { Card, CardContent } from "@/ui/components/ui/card";
 import { Building2, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ProjectCardProps {
     project: Project;
 }
 
+function ProjectInitials({ name }: { name: string }) {
+    const initials = name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((w) => w[0].toUpperCase())
+        .join("");
+    return (
+        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shrink-0">
+            <span className="text-primary-foreground text-sm font-bold tracking-wide">{initials}</span>
+        </div>
+    );
+}
+
 export function ProjectCard({ project }: ProjectCardProps) {
     return (
-        <Card
-            className={`hover:shadow-lg hover:border-black dark:hover:border-white hover:scale-105 transition-all duration-200 h-full ${!project.isActive ? "opacity-60" : ""}`}
-        >
-            <CardContent className="h-full p-4 flex flex-col gap-3">
-                <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-sm sm:text-base font-semibold leading-tight">
-                        {project.name}
-                    </h3>
-                    <Badge
-                        className={
-                            project.isActive
-                                ? "shrink-0 px-1.5 py-0 text-[10px] sm:text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-0"
-                                : "shrink-0 px-1.5 py-0 text-[10px] sm:text-xs bg-muted text-muted-foreground border-0"
-                        }
-                    >
-                        {project.isActive ? "Activo" : "Inactivo"}
-                    </Badge>
-                </div>
+        <Link to={`/projects/${project.id.value}`} className="block h-full">
+            <Card className={`hover:shadow-lg hover:border-black dark:hover:border-white hover:scale-[1.02] transition-all duration-200 h-full cursor-pointer ${!project.isActive ? "opacity-60" : ""}`}>
+                <CardContent className="p-4 flex items-center gap-4">
+                    <ProjectInitials name={project.name} />
 
-                {project.description && (
-                    <p className="text-[11px] sm:text-sm text-muted-foreground line-clamp-2 leading-snug">
-                        {project.description}
-                    </p>
-                )}
-
-                <div className="mt-auto space-y-1.5">
-                    <div>
-                        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                            Cliente
-                        </span>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                            <Building2 className="size-3.5 text-muted-foreground shrink-0" />
-                            <span className="text-sm font-semibold truncate">{project.client.name}</span>
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold leading-tight truncate">
+                            {project.name}
+                        </h3>
+                        <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <Building2 className="size-3 shrink-0" />
+                                <span className="truncate max-w-[140px]">{project.client?.name || "-"}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <Users className="size-3 shrink-0" />
+                                <span>{project.teamMembers ?? 0} miembros</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-[11px] sm:text-sm text-muted-foreground">
-                        <Users className="size-3.5 shrink-0" />
-                        <span>{project.teamMembers ?? 0} miembros</span>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+                    <Badge
+                        className={`shrink-0 ${
+                            project.isActive
+                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-0"
+                                : "bg-muted text-muted-foreground border-0"
+                        }`}
+                    >
+                        {project.isActive ? "Activo" : "Inactivo"}
+                    </Badge>
+                </CardContent>
+            </Card>
+        </Link>
     );
 }

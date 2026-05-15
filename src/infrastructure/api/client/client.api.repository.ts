@@ -25,6 +25,11 @@ export const ClientApiRepository: ClientRepository = {
             sector_id: client.sector_id,
             is_active: client.is_active
         });
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/clients/${client.id}`);
+            if (!refetched.data) return null;
+            return clientMapper.toDomain(refetched.data);
+        }
         return clientMapper.toDomain(response.data);
     },
     softDeleteClient: async (id: string): Promise<void> => {

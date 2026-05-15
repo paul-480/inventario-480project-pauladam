@@ -1,4 +1,3 @@
-import { TokenExpiredError } from '@/domain/auth/errors/token-expired.error';
 import { useAuthStore } from './useAuthStore';
 
 export const useAuth = () => {

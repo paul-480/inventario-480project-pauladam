@@ -27,6 +27,11 @@ export const ProjectApiRepository: ProjectRepository = {
             is_active: project.is_active,
             client_id: project.client_id
         });
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/projects/${project.id}`);
+            if (!refetched.data) return null;
+            return projectMapper.toDomain(refetched.data);
+        }
         return projectMapper.toDomain(response.data);
     },
     softDeleteProject: async (id: string, isActive: boolean): Promise<void> => {

@@ -39,14 +39,14 @@ export const DeleteUserSchema = z.object({
 export type DeleteUserSchema = z.infer<typeof DeleteUserSchema>;
 
 export const ChangePasswordSchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     current_password: z.string().min(1),
-    new_password: z.string().min(6),
+    new_password: z.string().min(8),
 });
 export type ChangePasswordSchema = z.infer<typeof ChangePasswordSchema>;
 
 export const AdminChangePasswordSchema = z.object({
-    id: z.string().uuid(),
-    new_password: z.string().min(6),
+    id: z.uuid(),
+    new_password: z.string().min(8),
 });
 export type AdminChangePasswordSchema = z.infer<typeof AdminChangePasswordSchema>;

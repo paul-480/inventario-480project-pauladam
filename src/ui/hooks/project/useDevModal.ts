@@ -1,10 +1,13 @@
 import { useCallback, useState } from "react";
 import { v7 as uuidv7 } from "uuid";
 import type { Development } from "@/domain/development/development.entity";
+import type { CreateDevelopmentSchema, UpdateDevelopmentSchema } from "@/infrastructure/development/development.schema";
+
+type SubmitData = Omit<UpdateDevelopmentSchema, "links"> & { links?: UpdateDevelopmentSchema["links"] };
 
 export function useDevModal(
-    createDevelopment: (data: any) => Promise<Development | null | undefined>,
-    updateDevelopment: (id: string, data: any) => Promise<Development | null | undefined>
+    createDevelopment: (data: CreateDevelopmentSchema) => Promise<Development | null | undefined>,
+    updateDevelopment: (id: string, data: UpdateDevelopmentSchema) => Promise<Development | null | undefined>
 ) {
     const [devModalOpen, setDevModalOpen] = useState(false);
     const [editingDev, setEditingDev] = useState<Development | null>(null);
@@ -19,7 +22,7 @@ export function useDevModal(
         setEditingDev(null);
     }, []);
 
-    const handleDevSubmit = useCallback(async (data: any) => {
+    const handleDevSubmit = useCallback(async (data: SubmitData) => {
         if (editingDev) {
             await updateDevelopment(editingDev.id.value, data);
         } else {

@@ -1,4 +1,4 @@
-import type { Development, DevelopmentLink } from "@/domain/development/development.entity";
+import type { Development } from "@/domain/development/development.entity";
 import { Uuid } from "@/domain/shared/uuid.vo";
 import type { CreateDevelopmentSchema, UpdateDevelopmentSchema, DevelopmentLinkSchema } from "./development.schema";
 

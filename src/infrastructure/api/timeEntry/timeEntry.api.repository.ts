@@ -52,6 +52,11 @@ export const TimeEntryApiRepository: TimeEntryRepository = {
     },
     updateProjectTimeEntry: async (projectId: string, entryId: string, entry: UpdateTimeEntrySchema): Promise<ProjectTimeEntry | null> => {
         const response = await axiosClient.put(`/projects/${projectId}/time-entries/${entryId}`, entry);
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/projects/${projectId}/time-entries/${entryId}`);
+            if (!refetched.data) return null;
+            return timeEntryMapper.toProjectTimeEntryDomain(refetched.data);
+        }
         return timeEntryMapper.toProjectTimeEntryDomain(response.data);
     },
     deleteProjectTimeEntry: async (projectId: string, entryId: string): Promise<void> => {

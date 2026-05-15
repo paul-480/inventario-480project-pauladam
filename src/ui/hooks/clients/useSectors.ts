@@ -2,6 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import type { Sector } from "@/domain/sector/sector.entity";
 import { SectorApiRepository } from "@/infrastructure/api/sector/sector.api.repository";
 import type { CreateSectorSchema, UpdateSectorSchema } from "@/infrastructure/sector/sector.schema";
+import { GetAllSectorsUseCase } from "@/application/sector/use-cases/get-all-sectors.use-case";
+import { GetSectorByIdUseCase } from "@/application/sector/use-cases/get-sector-by-id.use-case";
+import { CreateSectorUseCase } from "@/application/sector/use-cases/create-sector.use-case";
+import { UpdateSectorUseCase } from "@/application/sector/use-cases/update-sector.use-case";
+import { DeleteSectorUseCase } from "@/application/sector/use-cases/delete-sector.use-case";
+
+const repository = SectorApiRepository;
 
 export function useSectors() {
     const [sectors, setSectors] = useState<Sector[]>([]);
@@ -12,7 +19,7 @@ export function useSectors() {
         setLoading(true);
         setError(null);
         try {
-            const data = await SectorApiRepository.getSectors();
+            const data = await GetAllSectorsUseCase(repository);
             setSectors(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching sectors"));
@@ -29,7 +36,7 @@ export function useSectors() {
         setLoading(true);
         setError(null);
         try {
-            const newSector = await SectorApiRepository.createSector(sector);
+            const newSector = await CreateSectorUseCase(repository, sector);
             if (newSector) {
                 setSectors(prev => [...prev, newSector]);
             }
@@ -46,7 +53,7 @@ export function useSectors() {
         setLoading(true);
         setError(null);
         try {
-            const updated = await SectorApiRepository.updateSector(sector);
+            const updated = await UpdateSectorUseCase(repository, sector);
             if (updated) {
                 setSectors(prev => prev.map(s => s.id.value === updated.id.value ? updated : s));
             }
@@ -63,7 +70,7 @@ export function useSectors() {
         setLoading(true);
         setError(null);
         try {
-            await SectorApiRepository.deleteSector(id);
+            await DeleteSectorUseCase(repository, id);
             setSectors(prev => prev.filter(s => s.id.value !== id));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting sector"));
@@ -99,7 +106,7 @@ export function useSector(sectorId: string | null) {
             setLoading(true);
             setError(null);
             try {
-                const data = await SectorApiRepository.getSectorById(sectorId);
+                const data = await GetSectorByIdUseCase(repository, sectorId);
                 setSector(data);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error("Error fetching sector"));

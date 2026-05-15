@@ -1,6 +1,6 @@
 import type { TimeEntry, ProjectTimeEntry } from "@/domain/timeEntry/timeEntry.entity";
 import { Uuid } from "@/domain/shared/uuid.vo";
-import type { CreateTimeEntrySchema, UpdateTimeEntrySchema } from "./timeEntry.schema";
+import type { CreateTimeEntrySchema } from "./timeEntry.schema";
 
 export interface TimeEntryResponseDto {
     id: string;
@@ -27,7 +27,7 @@ export const timeEntryMapper = {
         return {
             id: new Uuid(raw.id),
             date: raw.date,
-            hour: raw.hour,
+            hour: Number(raw.hour),
             comment: raw.comment,
             project: {
                 id: new Uuid(raw.project.id),
@@ -43,7 +43,7 @@ export const timeEntryMapper = {
             name: raw.name,
             surname: raw.surname,
             date: raw.date,
-            hour: raw.hour,
+            hour: Number(raw.hour),
             comment: raw.comment
         };
     },

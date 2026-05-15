@@ -11,13 +11,8 @@ import {
     DialogFooter,
 } from "@/ui/components/ui/dialog";
 import { Alert, AlertDescription } from "@/ui/components/ui/alert";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/ui/components/ui/select";
+import { FormInput } from "@/ui/components/forms/common/FormInput";
+import { FormSelect } from "@/ui/components/forms/common/FormSelect";
 import { useClients } from "@/ui/hooks/clients/useClients";
 import { useCreateProject } from "@/ui/hooks/project/useCreateProject";
 import { FolderPlus } from "lucide-react";
@@ -42,9 +37,8 @@ export function NewProjectModal({ open, onOpenChange, onSuccess }: NewProjectMod
     const { createProject, loading: creating } = useCreateProject();
 
     const {
-        register,
+        control,
         handleSubmit,
-        setValue,
         reset,
         setError,
         formState: { errors },
@@ -64,7 +58,7 @@ export function NewProjectModal({ open, onOpenChange, onSuccess }: NewProjectMod
                 id: uuidv7(),
                 name: data.name,
                 description: data.description ?? null,
-                start_date: data.start_date ?? null,
+                start_date: data.start_date?.trim() ? data.start_date : undefined,
                 client_id: data.client_id,
             });
             reset();
@@ -80,6 +74,8 @@ export function NewProjectModal({ open, onOpenChange, onSuccess }: NewProjectMod
         onOpenChange(open);
     };
 
+    const clientOptions = clients.map((c) => ({ value: c.id.value, label: c.name }));
+
     return (
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-lg">
@@ -91,82 +87,35 @@ export function NewProjectModal({ open, onOpenChange, onSuccess }: NewProjectMod
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium" htmlFor="name">
-                            Nombre <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                            id="name"
-                            {...register("name")}
-                            className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                            placeholder="Nombre del proyecto"
-                        />
-                        {errors.name && (
-                            <p className="text-xs text-destructive">{errors.name.message}</p>
-                        )}
-                    </div>
+                    <FormInput
+                        control={control}
+                        name="name"
+                        label="Nombre *"
+                        placeholder="Nombre del proyecto"
+                    />
 
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium" htmlFor="description">
-                            Descripción
-                        </label>
-                        <textarea
-                            id="description"
-                            {...register("description")}
-                            rows={3}
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 resize-none"
-                            placeholder="Descripción del proyecto (opcional)"
-                        />
-                        {errors.description && (
-                            <p className="text-xs text-destructive">{errors.description.message}</p>
-                        )}
-                    </div>
+                    <FormInput
+                        control={control}
+                        name="description"
+                        label="Descripción"
+                        placeholder="Descripción del proyecto (opcional)"
+                    />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-medium" htmlFor="start_date">
-                                Fecha de inicio
-                            </label>
-                            <input
-                                id="start_date"
-                                type="date"
-                                {...register("start_date")}
-                                className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                            />
-                            {errors.start_date && (
-                                <p className="text-xs text-destructive">{errors.start_date.message}</p>
-                            )}
-                        </div>
+                        <FormInput
+                            control={control}
+                            name="start_date"
+                            label="Fecha de inicio"
+                            type="date"
+                        />
 
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-medium">
-                                Cliente <span className="text-destructive">*</span>
-                            </label>
-                            <Select
-                                disabled={clientsLoading}
-                                onValueChange={(val) =>
-                                    setValue("client_id", val, { shouldValidate: true })
-                                }
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue
-                                        placeholder={
-                                            clientsLoading ? "Cargando clientes..." : "Selecciona un cliente"
-                                        }
-                                    />
-                                </SelectTrigger>
-                                <SelectContent position="popper">
-                                    {clients.map((client) => (
-                                        <SelectItem key={client.id.value} value={client.id.value}>
-                                            {client.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {errors.client_id && (
-                                <p className="text-xs text-destructive">{errors.client_id.message}</p>
-                            )}
-                        </div>
+                        <FormSelect
+                            control={control}
+                            name="client_id"
+                            label="Cliente *"
+                            placeholder={clientsLoading ? "Cargando clientes..." : "Selecciona un cliente"}
+                            options={clientOptions}
+                        />
                     </div>
 
                     {errors.root && (

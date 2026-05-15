@@ -28,7 +28,8 @@ import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMe } from "@/ui/hooks/user/useMe";
-import CustomUserCard from "../user/CustomUserCard";
+import { isAdmin as isAdminRole, isActive } from "@/domain/user/user.entity";
+import { Avatar, AvatarFallback } from "@/ui/components/ui/avatar";
 
 
 
@@ -81,12 +82,23 @@ const AppSidebar = () => {
           align={isMobile ? "center" : (state === "expanded" ? "left" : "center")}
           className={(isMobile || state === "collapsed") ? "mx-auto" : undefined} 
         />
-        <CustomUserCard 
-          user={me} 
-          hideEmail 
-          onlyAvatar={!isExpanded && !isMobile}
-          className={isExpanded || isMobile ? "h-20 min-h-20" : "h-12 w-12 mx-auto border-none shadow-none bg-transparent hover:scale-110"}
-        />
+        {me && (
+          <Link to={`/user/${me.id.value}`} className="block">
+            <div className={`flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-foreground/5 transition-colors ${!isActive(me) ? 'opacity-60' : ''}`}>
+              <Avatar className="w-9 h-9 shrink-0">
+                <AvatarFallback className={isActive(me) ? 'bg-primary text-primary-foreground text-sm' : 'bg-muted text-muted-foreground text-sm'}>
+                  {me.name[0]}{me.surname[0]}
+                </AvatarFallback>
+              </Avatar>
+              {(isExpanded || isMobile) && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate leading-tight">{me.name} {me.surname}</p>
+                  <p className="text-[11px] text-muted-foreground truncate">{isAdminRole(me) ? 'Administrador' : 'Empleado'}</p>
+                </div>
+              )}
+            </div>
+          </Link>
+        )}
       </SidebarHeader>
 
 <hr />

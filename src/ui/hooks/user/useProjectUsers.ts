@@ -2,6 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import type { ProjectUser } from "@/domain/projectUser/projectUser.entity";
 import { ProjectUserApiRepository } from "@/infrastructure/api/projectUser/projectUser.api.repository";
 import type { AddProjectUserSchema } from "@/infrastructure/projectUser/projectUser.repository";
+import { GetProjectTeamUseCase } from "@/application/project/use-cases/get-project-team.use-case";
+import { AddProjectUserUseCase } from "@/application/project/use-cases/add-project-user.use-case";
+import { UpdateProjectUserUseCase } from "@/application/project/use-cases/update-project-user.use-case";
+import { DeactivateProjectUserUseCase } from "@/application/project/use-cases/deactivate-project-user.use-case";
+
+const repository = ProjectUserApiRepository;
 
 export function useProjectUsers(projectId: string | null) {
     const [users, setUsers] = useState<ProjectUser[]>([]);
@@ -17,7 +23,7 @@ export function useProjectUsers(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const data = await ProjectUserApiRepository.getProjectUsers(projectId);
+            const data = await GetProjectTeamUseCase(repository, projectId);
             setUsers(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching project users"));
@@ -36,7 +42,7 @@ export function useProjectUsers(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const newUser = await ProjectUserApiRepository.addProjectUser(projectId, user);
+            const newUser = await AddProjectUserUseCase(repository, projectId, user);
             if (newUser) {
                 setUsers(prev => [...prev, newUser]);
             }
@@ -55,7 +61,7 @@ export function useProjectUsers(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            const updated = await ProjectUserApiRepository.updateProjectUsers(projectId, user);
+            const updated = await UpdateProjectUserUseCase(repository, projectId, user);
             if (updated) {
                 setUsers(prev => prev.map(u => u.appUserId.value === updated.appUserId.value ? updated : u));
             }
@@ -74,7 +80,7 @@ export function useProjectUsers(projectId: string | null) {
         setLoading(true);
         setError(null);
         try {
-            await ProjectUserApiRepository.deactivateProjectUser(projectId, appUserId, isActive);
+            await DeactivateProjectUserUseCase(repository, projectId, appUserId, isActive);
             setUsers(prev => prev.map(u => 
                 u.appUserId.value === appUserId ? { ...u, isUserActive: isActive } : u
             ));

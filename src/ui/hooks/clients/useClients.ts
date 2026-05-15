@@ -2,6 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import type { Client } from "@/domain/client/client.entity";
 import { ClientApiRepository } from "@/infrastructure/api/client/client.api.repository";
 import type { CreateClientSchema, UpdateClientSchema } from "@/infrastructure/client/client.schema";
+import { GetAllClientsUseCase } from "@/application/client/use-cases/get-all-clients.use-case";
+import { GetClientByIdUseCase } from "@/application/client/use-cases/get-client-by-id.use-case";
+import { CreateClientUseCase } from "@/application/client/use-cases/create-client.use-case";
+import { UpdateClientUseCase } from "@/application/client/use-cases/update-client.use-case";
+import { DeleteClientUseCase } from "@/application/client/use-cases/delete-client.use-case";
+import { SoftDeleteClientUseCase } from "@/application/client/use-cases/soft-delete-client.use-case";
+
+const repository = ClientApiRepository;
 
 export function useClients() {
     const [clients, setClients] = useState<Client[]>([]);
@@ -12,7 +20,7 @@ export function useClients() {
         setLoading(true);
         setError(null);
         try {
-            const data = await ClientApiRepository.getClients();
+            const data = await GetAllClientsUseCase(repository);
             setClients(data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error fetching clients"));
@@ -29,7 +37,7 @@ export function useClients() {
         setLoading(true);
         setError(null);
         try {
-            const newClient = await ClientApiRepository.createClient(client);
+            const newClient = await CreateClientUseCase(repository, client);
             if (newClient) {
                 setClients(prev => [...prev, newClient]);
             }
@@ -46,7 +54,7 @@ export function useClients() {
         setLoading(true);
         setError(null);
         try {
-            const updated = await ClientApiRepository.updateClient(client);
+            const updated = await UpdateClientUseCase(repository, client);
             if (updated) {
                 setClients(prev => prev.map(c => c.id.value === updated.id.value ? updated : c));
             }
@@ -63,7 +71,7 @@ export function useClients() {
         setLoading(true);
         setError(null);
         try {
-            await ClientApiRepository.deleteClient(id);
+            await DeleteClientUseCase(repository, id);
             setClients(prev => prev.filter(c => c.id.value !== id));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error deleting client"));
@@ -77,7 +85,7 @@ export function useClients() {
         setLoading(true);
         setError(null);
         try {
-            await ClientApiRepository.softDeleteClient(id);
+            await SoftDeleteClientUseCase(repository, id);
             setClients(prev => prev.map(c => c.id.value === id ? { ...c, isActive: false } : c));
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Error soft deleting client"));
@@ -114,7 +122,7 @@ export function useClient(clientId: string | null) {
             setLoading(true);
             setError(null);
             try {
-                const data = await ClientApiRepository.getClientById(clientId);
+                const data = await GetClientByIdUseCase(repository, clientId);
                 setClient(data);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error("Error fetching client"));

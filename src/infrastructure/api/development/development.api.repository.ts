@@ -16,6 +16,11 @@ export const DevelopmentApiRepository: DevelopmentRepository = {
     },
     updateProjectDevelopment: async (projectId: string, developmentId: string, development: UpdateDevelopmentSchema): Promise<Development | null> => {
         const response = await axiosClient.put(`/projects/${projectId}/developments/${developmentId}`, development);
+        if (!response.data?.id) {
+            const refetched = await axiosClient.get(`/projects/${projectId}/developments/${developmentId}`);
+            if (!refetched.data) return null;
+            return developmentMapper.toDomain(refetched.data);
+        }
         return developmentMapper.toDomain(response.data);
     },
     deleteProjectDevelopment: async (projectId: string, developmentId: string): Promise<void> => {

@@ -12,18 +12,19 @@ import { Alert, AlertDescription } from '@/ui/components/ui/alert';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, isError } = useAuth();
+  const { isAuthenticated, isLoading, isError } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   useEffect(() => {
     if (isError) {
       setErrorMessage("Credenciales inválidas. Por favor, inténtalo de nuevo.");
     }
   },[isError]);
+  if (isLoading) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">

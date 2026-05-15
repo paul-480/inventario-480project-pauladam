@@ -7,7 +7,7 @@ const CustomAvatar = ({ user, className }: { user: User, className?: string }) =
     const getInitials = () =>
         `${user.name[0]}${user.surname[0]}`.toUpperCase();
     return (
-        <Link to={`/user/${user.id}`} >
+        <Link to={`/user/${user.id.value}`} >
             <Avatar className={`${className || "w-20 h-20"} hover:cursor-pointer hover:shadow-lg transition-all duration-300 ease-in-out`}>
                 <AvatarFallback className={isActive(user)
                     ? 'bg-primary text-primary-foreground text-xl'
